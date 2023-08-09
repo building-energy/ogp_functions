@@ -1,7 +1,7 @@
 [
     {
-        "data_files": ["ChangeHistory.csv"], 
         "download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
-        "zip_file": true
+        "zip_file": true,
+        "data_files": ["ChangeHistory.csv","Changes.csv"]
     }
 ]
