@@ -1,0 +1,105 @@
+{
+    "@context": "http://www.w3.org/ns/csvw",
+    "@type": "Schema",
+    "columns": [
+        {
+            "name": "GEOGCD",
+            "titles": "GEOGCD",
+            "rdfs:label": "GEOGCD",
+            "rdfs:comment": "Nine digit code for the Instance (i.e. E01000001).",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "GEOGNM",
+            "titles": "GEOGNM",
+            "rdfs:label": "GEOGNM",
+            "rdfs:comment": "Name of the Instance",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "GEOGNMW",
+            "titles": "GEOGNMW",
+            "rdfs:label": "GEOGNMW",
+            "rdfs:comment": "Welsh name of the Instance",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "GEOGCD_P",
+            "titles": "GEOGCD_P",
+            "rdfs:label": "GEOGCD_P",
+            "rdfs:comment": "The previous nine digit code before the change.",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "GEOGNM_P",
+            "titles": "GEOGNM_P",
+            "rdfs:label": "GEOGNM_P",
+            "rdfs:comment": "The previous name before the change.",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "GEOGNMW_P",
+            "titles": "GEOGNMW_P",
+            "rdfs:label": "GEOGNMW_P",
+            "rdfs:comment": "The previous Welsh name before the change.",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "SI_ID",
+            "titles": "SI_ID",
+            "rdfs:label": "SI_ID",
+            "rdfs:comment": "Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "SI_TITLE",
+            "titles": "SI_TITLE",
+            "rdfs:label": "SI_TITLE",
+            "rdfs:comment": "Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "OPER_DATE",
+            "titles": "OPER_DATE",
+            "rdfs:label": "OPER_DATE",
+            "rdfs:comment": "Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "ENTITYCD",
+            "titles": "ENTITYCD",
+            "rdfs:label": "ENTITYCD",
+            "rdfs:comment": "Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "YEAR",
+            "titles": "YEAR",
+            "rdfs:label": "YEAR",
+            "rdfs:comment": "This field refers to the year of introduction.",
+            "datatype": {
+                "base": "integer"
+            }
+        }
+    ]
+}
