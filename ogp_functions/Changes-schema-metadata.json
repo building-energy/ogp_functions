@@ -80,7 +80,8 @@
             "rdfs:label": "OPER_DATE",
             "rdfs:comment": "Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)",
             "datatype": {
-                "base": "string"
+                "base": "date",
+                "format": "dd/mm/yyyy"
             }
         },
         {
