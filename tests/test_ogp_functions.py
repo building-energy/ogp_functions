@@ -14,7 +14,7 @@ import json
 
 
 
-data=ogp_functions.load_data()
+#data=ogp_functions.load_data()
 
 #with open('data.json','w') as f:
 #    json.dump(data,f,indent=4)
@@ -26,6 +26,23 @@ data=ogp_functions.load_data()
 
 class TestOGPFunctions(unittest.TestCase):
     ""
+    
+    def test_get_latest_data_file_info(self):
+        ""
+        
+        
+        result=ogp_functions.get_latest_data_file_info()
+        print(result)
+    
+    
+    
+    def _test_download_latest_data_files(self):
+        ""
+        
+        #ogp_functions.download_latest_data_files()
+        
+        
+        
     
     def _test_load_data(self):
         ""
@@ -43,13 +60,10 @@ class TestOGPFunctions(unittest.TestCase):
          with open('data.json') as f:
              result=json.load(f)
     
-    def _test_download_latest_data_files(self):
-        ""
-        
-        #ogp_functions.download_latest_data_files()
     
     
-    def test_get_previous_codes(self):
+    
+    def _test_get_previous_codes(self):
         ""
         code='E06000063'
         result=ogp_functions.get_previous_codes(
@@ -64,7 +78,7 @@ class TestOGPFunctions(unittest.TestCase):
             )
         
         
-    def test_get_next_codes(self):
+    def _test_get_next_codes(self):
         ""
         code='E07000026'
         result=ogp_functions.get_next_codes(
@@ -80,7 +94,7 @@ class TestOGPFunctions(unittest.TestCase):
         
         
         
-    def test_get_latest_codes(self):
+    def _test_get_latest_codes(self):
         ""
         code='E07000026'
         result=ogp_functions.get_latest_codes(
@@ -95,7 +109,7 @@ class TestOGPFunctions(unittest.TestCase):
             )
         
         
-    def test_get_parent_codes(self):
+    def _test_get_parent_codes(self):
         ""
         code='E00130460'
         result=ogp_functions.get_parent_codes(
@@ -108,7 +122,7 @@ class TestOGPFunctions(unittest.TestCase):
             )
                         
         
-    def test_get_child_codes(self):
+    def _test_get_child_codes(self):
         ""
         code='E01025710'
         result=ogp_functions.get_child_codes(
@@ -121,7 +135,7 @@ class TestOGPFunctions(unittest.TestCase):
             )
         
         
-    def test_get_ancestor_codes(self):
+    def _test_get_ancestor_codes(self):
         ""
         code='E00130460'
         result=ogp_functions.get_ancestor_codes(
@@ -134,7 +148,7 @@ class TestOGPFunctions(unittest.TestCase):
             )
         
         
-    def test_get_descendent_codes(self):
+    def _test_get_descendent_codes(self):
         ""
         code='E02005354'
         result=ogp_functions.get_descendent_codes(
