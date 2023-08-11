@@ -49,19 +49,63 @@ def update_data_files(
     # update data files
     for x in latest_data_file_info:
         
-        metadata_download_url=x['metadata_download_url']
+        print(x)
+        
+        file_name=x['datafile_name']
+        
+        # data_file        
+        fp=os.path.join(data_folder,file_name)
+        download_url=x['data_download_url']
+        
+        if not os.path.exists(
+                fp
+                ):
+            
+            urllib.request.urlretrieve(
+                url=download_url, 
+                filename=fp
+                )
+        
+        # metadata file
+        fp=os.path.join(data_folder,f'{file_name}-metadata.xml')
+        download_url=x['metadata_download_url']
+        
+        if not os.path.exists(
+                fp
+                ):
+            
+            urllib.request.urlretrieve(
+                url=download_url, 
+                filename=fp
+                )
+            
+        break
+        
+        with urllib.request.urlopen(file_download_url) as response:
+            print(response.url)
+            print(response.info().get_filename())
+        
+        
+        
+        
         
         metadata_xml=\
-            get_metadata_xml(
+            _get_metadata_xml(
                 metadata_download_url
                 )
     
         metadata_dict=\
-            parse_metadata_xml(
+            _parse_metadata_xml(
                 metadata_xml
                 )
         
-        print(metadata_dict)
+        #print(metadata_dict)
+        
+        
+        
+        
+        
+        break
 
 
 
@@ -109,7 +153,7 @@ def _get_latest_data_file_info_json(
         
 
 
-def get_metadata_xml(
+def _get_metadata_xml(
         download_url
         ):
     """
@@ -127,7 +171,7 @@ def get_metadata_xml(
     return root
     
 
-def parse_metadata_xml(
+def _parse_metadata_xml(
         root
         ):
     """
