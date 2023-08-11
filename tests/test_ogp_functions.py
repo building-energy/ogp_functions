@@ -34,7 +34,12 @@ class TestMainFunctions(unittest.TestCase):
         result=ogp_functions.get_region_from_local_authority_district(
             'E06000001'
             )
-        print(result)
+        #print(result)
+        
+        self.assertEqual(
+            result,
+            ['E12000001']
+            )
         
         
     def test_get_local_authority_district_from_region(self):
@@ -43,10 +48,83 @@ class TestMainFunctions(unittest.TestCase):
         result=ogp_functions.get_local_authority_district_from_region(
             'E12000001'
             )
-        print(result)
+        #print(result)
+        
+        self.assertEqual(
+            set(result),
+            set(['E06000001', 'E06000002', 'E06000003', 'E06000004', 
+                 'E06000005', 'E06000047', 'E06000057', 'E08000021', 
+                 'E08000022', 'E08000023', 'E08000024', 'E08000037'])
+            )
 
-
-
+    def test_get_previous_codes(self):
+        ""
+        code='E06000063'
+        result=ogp_functions.get_previous_codes(
+            code
+            )
+        #print(result)
+        
+        self.assertEqual(
+            set(result),
+            set(['E07000028','E07000026','E07000029'])
+            )
+        
+        
+    def test_get_next_codes(self):
+        ""
+        code='E07000026'
+        result=ogp_functions.get_next_codes(
+            code
+            )
+        #print(result)
+        
+        self.assertEqual(
+            set(result),
+            set(['E06000063'])
+            )
+        
+        
+    def test_get_latest_codes(self):
+        ""
+        code='E07000026'
+        result=ogp_functions.get_latest_codes(
+            code
+            )
+        #print(result)
+        
+        self.assertEqual(
+            set(result),
+            set(['E06000063'])
+            )
+        
+        
+    def test_get_code_entity(self):
+        ""
+        code='E07000026'
+        result=ogp_functions.get_code_entity(
+            code
+            )
+        #print(result)
+        
+        self.assertEqual(
+            result,
+            'E07'
+            )
+        
+        
+    def test_get_parent_codes(self):
+        ""
+        code='E00130460'
+        result=ogp_functions.get_parent_codes(
+            code
+            )
+        self.assertEqual(
+            set(result),
+            set(['E01025710'])
+            )
+                  
+        
 
 
 class TestDataFolder(unittest.TestCase):
@@ -55,13 +133,16 @@ class TestDataFolder(unittest.TestCase):
     def test_update_data_files(self):
         ""
         
-        ogp_functions.update_data_files()
+        ogp_functions.update_data_files(
+            
+            reload_database_tables=False
+            )
         
     def test___read_csvw_metadata_json(self):
         ""
         
         result=ogp_functions._read_csvw_metadata_json(
-            'Local_Authority_District_to_Region_(December_2022)_Lookup_in_England.csv'
+            'Local_Authority_District_to_Region_(December_2022)_Lookup_in_England'
             )
         #print(result)
     
@@ -131,64 +212,12 @@ class TestDataFolder(unittest.TestCase):
     
     
     
-    def _test_get_previous_codes(self):
-        ""
-        code='E06000063'
-        result=ogp_functions.get_previous_codes(
-            code,
-            data
-            )
-        #print(result)
+    
         
-        self.assertEqual(
-            set(result),
-            set(['E07000028','E07000026','E07000029'])
-            )
+    
         
         
-    def _test_get_next_codes(self):
-        ""
-        code='E07000026'
-        result=ogp_functions.get_next_codes(
-            code,
-            data
-            )
-        #print(result)
-        
-        self.assertEqual(
-            set(result),
-            set(['E06000063'])
-            )
-        
-        
-        
-    def _test_get_latest_codes(self):
-        ""
-        code='E07000026'
-        result=ogp_functions.get_latest_codes(
-            code,
-            data
-            )
-        #print(result)
-        
-        self.assertEqual(
-            set(result),
-            set(['E06000063'])
-            )
-        
-        
-    def _test_get_parent_codes(self):
-        ""
-        code='E00130460'
-        result=ogp_functions.get_parent_codes(
-            code,
-            data
-            )
-        self.assertEqual(
-            set(result),
-            set(['E01025710'])
-            )
-                        
+          
         
     def _test_get_child_codes(self):
         ""

@@ -9,7 +9,8 @@
             "rdfs:comment": "Nine digit code for the Instance (i.e. E01000001).",
             "datatype": {
                 "base": "string"
-            }
+            },
+            "notes": "SETINDEX"
         },
         {
             "name": "GEOGNM",
@@ -36,7 +37,8 @@
             "rdfs:comment": "The previous nine digit code before the change.",
             "datatype": {
                 "base": "string"
-            }
+            },
+            "notes": "SETINDEX"
         },
         {
             "name": "GEOGNM_P",
@@ -91,7 +93,8 @@
             "rdfs:comment": "Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.",
             "datatype": {
                 "base": "string"
-            }
+            },
+            "notes": "SETINDEX"
         },
         {
             "name": "YEAR",

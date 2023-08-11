@@ -9,7 +9,8 @@
             "rdfs:comment": "Nine digit code for the Instance (i.e. E01000001).",
             "datatype": {
                 "base": "string"
-            }
+            },
+            "notes": "SETINDEX"
         },
         {
             "name": "GEOGNM",
@@ -74,7 +75,8 @@
             "rdfs:comment": "Nine digit code of the parent instance in the hierarchy (if there is one).",
             "datatype": {
                 "base": "string"
-            }
+            },
+            "notes": "SETINDEX"
         },
         {
             "name": "ENTITYCD",
@@ -83,7 +85,8 @@
             "rdfs:comment": "Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.",
             "datatype": {
                 "base": "string"
-            }
+            },
+            "notes": "SETINDEX"
         },
         {
             "name": "OWNER",

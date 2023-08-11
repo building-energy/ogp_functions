@@ -6,7 +6,8 @@
             "name": "LAD22CD",
             "datatype": {
                 "base": "string"
-            }
+            },
+            "notes": "SETINDEX"
         },
         {
             "name": "LAD22NM",
@@ -18,7 +19,8 @@
             "name": "RGN22CD",
             "datatype": {
                 "base": "string"
-            }
+            },
+            "notes": "SETINDEX"
         },
         {
             "name": "RGN22NM",

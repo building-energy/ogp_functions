@@ -1,0 +1,225 @@
+{
+    "@context": "http://www.w3.org/ns/csvw",
+    "@type": "Schema",
+    "columns": [
+        {
+            "name": "pcd",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "pcd2",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "pcds",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "dointr",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "doterm",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "usertype",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "oseast1m",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "osnrth1m",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "osgrdind",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "oa21",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "cty",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "ced",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "laua",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "ward",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "nhser",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "ctry",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "rgn",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "pcon",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "ttwa",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "itl",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "park",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "lsoa21",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "msoa21",
+            "datatype": {
+                "base": "string"
+            },
+            "notes": "SETINDEX"
+        },
+        {
+            "name": "wz11",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "sicbl",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "bua22",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "ru11ind",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "oac11",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "lat",
+            "datatype": {
+                "base": "decimal"
+            }
+        },
+        {
+            "name": "long",
+            "datatype": {
+                "base": "decimal"
+            }
+        },
+        {
+            "name": "lep1",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "lep2",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "pfa",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "imd",
+            "datatype": {
+                "base": "integer"
+            }
+        },
+        {
+            "name": "icb",
+            "datatype": {
+                "base": "string"
+            }
+        }
+    ]
+}

@@ -33,7 +33,8 @@ urllib.request.urlcleanup()
 def update_data_files(
         data_folder=_default_data_folder,
         latest_data_file_info_download_url=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/latest_data_file_info.json',
-        fp_database=_default_database_fp
+        fp_database=_default_database_fp,
+        reload_database_tables=False
         ):
     """
     """
@@ -64,33 +65,29 @@ def update_data_files(
         base,ext=os.path.splitext(fp)
         download_url=x['data_download_url']
         
-        if not os.path.exists(
-                fp
-                ):
+        if not os.path.exists(fp):
             
             urllib.request.urlretrieve(
                 url=download_url, 
                 filename=fp
                 )
             
-            # unzip data file if needed
-            if ext=='.zip':
+        # unzip data file if needed
+        if ext=='.zip':
+            
+            with zipfile.ZipFile(fp) as z:
                 
-                with zipfile.ZipFile(fp) as z:
+                for y in x['extract']:
+                
+                    fp2=os.path.join(data_folder,y['data_filename'])
                     
-                    for y in x['extract']:
-                    
-                        fp2=os.path.join(data_folder,y['data_filename'])
-                    
+                    if not os.path.exists(fp2):
+                
                         with open(fp2, 'wb') as f:
                             
                             f.write(z.read(y['data_filepath']))
-                        
-                
-                with zipfile.ZipFile(fp, 'r') as zip_ref:
-                    zip_ref.extractall(base)
-        
-        
+                    
+            
         # download metadata file
         fp=os.path.join(data_folder,f'{data_filename}-metadata.xml')
         download_url=x['metadata_download_url']
@@ -107,36 +104,40 @@ def update_data_files(
         # import data to database
         
         if ext=='.zip':
-            continue
+            table_names=[os.path.splitext(y['data_filename'])[0] for y in x['extract']]
+        else:
+            table_names=[os.path.splitext(data_filename)[0]]
         
-        table_name=os.path.splitext(data_filename)[0]
+        for table_name in table_names:
         
-        if not _check_if_table_exists_in_database(
-                fp_database, 
-                table_name
-                ):
-        
-            csvw_metadata=\
-                _read_csvw_metadata_json(
-                        data_filename
-                        )
+            if reload_database_tables or \
+                not _check_if_table_exists_in_database(
+                        fp_database, 
+                        table_name
+                        ):
             
-            _create_database_table(
-                fp_database, 
-                table_name,
-                csvw_metadata
-                )
+                csvw_metadata=\
+                    _read_csvw_metadata_json(
+                            table_name
+                            )
+                
+                _create_database_table(
+                    fp_database, 
+                    table_name,
+                    csvw_metadata
+                    )
         
         
+        #break
         
         
 def _read_csvw_metadata_json(
-        data_filename
+        table_name
         ):
     ""
     fp=os.path.join(
         pkg_resources.files(ogp_functions),
-        f'{data_filename}-metadata.json'
+        f'{table_name}.csv-schema-metadata.json'
         )
     with open(fp) as f:
         csvw_metadata=json.load(f)
@@ -161,6 +162,18 @@ def _update_latest_data_file_info(
     
     
     """
+
+    # --- temporary for development ----
+    import shutil
+    shutil.copyfile(
+        os.path.join(os.pardir,'latest_data_file_info.json'),
+        os.path.join('_data','latest_data_file_info.json')
+        )
+    return
+    # ---
+
+
+
 
     urllib.request.urlcleanup()
     
@@ -557,9 +570,11 @@ def _create_database_table(
         c = conn.cursor()
         for column_dict in csvw_metadata['columns']:
             column_name=column_dict['name']
-            if name.endswith('CD'):
+            notes=column_dict.get('notes')
+            if notes=='SETINDEX':
                 index_name=f'{table_name}_{column_name}'
-                query=f"CREATE INDEX {index_name} ON {table_name}({column_name})"
+                query=f'CREATE INDEX "{index_name}" ON "{table_name}"("{column_name}")'
+                print(query)
                 c.execute(query)
                 conn.commit()
     
@@ -579,132 +594,132 @@ def _create_database_table(
     
 
 
-def _create_changes_table(
-        fp_database,
-        verbose=True
-        ):
-    """Creates a changes table in the sqlite database.
+# def _create_changes_table(
+#         fp_database,
+#         verbose=True
+#         ):
+#     """Creates a changes table in the sqlite database.
     
-    Replaces any existing 'changes' table.
+#     Replaces any existing 'changes' table.
     
-    """
+#     """
     
-    # drop table in database
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query='DROP TABLE IF EXISTS changes;'
-        c.execute(query)
-        conn.commit()
+#     # drop table in database
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query='DROP TABLE IF EXISTS changes;'
+#         c.execute(query)
+#         conn.commit()
     
-    # create query
-    datatype_map={
-    'integer':'INTEGER',
-    'decimal':'REAL'
-    }
-    query='CREATE TABLE changes ('
-    for column_dict in changes_schema_metadata['columns']:
-        name=column_dict['name']
-        datatype=datatype_map.get(column_dict['datatype']['base'],'TEXT')
-        query+=f"{name} {datatype}"
-        query+=", "
-    query=query[:-2]
-    query+=');'
+#     # create query
+#     datatype_map={
+#     'integer':'INTEGER',
+#     'decimal':'REAL'
+#     }
+#     query='CREATE TABLE changes ('
+#     for column_dict in changes_schema_metadata['columns']:
+#         name=column_dict['name']
+#         datatype=datatype_map.get(column_dict['datatype']['base'],'TEXT')
+#         query+=f"{name} {datatype}"
+#         query+=", "
+#     query=query[:-2]
+#     query+=');'
     
-    if verbose:
-        print('---QUERY TO CREATE TABLE---')
-        print(query)
+#     if verbose:
+#         print('---QUERY TO CREATE TABLE---')
+#         print(query)
     
-    # create empty table in database
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
+#     # create empty table in database
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         c.execute(query)
+#         conn.commit()
         
-    # create indexes
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query="CREATE INDEX index_changes_GEOGCD ON changes(GEOGCD)"
-        c.execute(query)
-        query="CREATE INDEX index_changes_GEOGCD_P ON changes(GEOGCD_P)"
-        c.execute(query)
-        conn.commit()
+#     # create indexes
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query="CREATE INDEX index_changes_GEOGCD ON changes(GEOGCD)"
+#         c.execute(query)
+#         query="CREATE INDEX index_changes_GEOGCD_P ON changes(GEOGCD_P)"
+#         c.execute(query)
+#         conn.commit()
         
-    # import data into table
-    fp_database2=fp_database.replace('\\','\\\\')
-    fp_csv=os.path.join(_default_data_folder,'Changes.csv')
-    fp_csv2=fp_csv.replace('\\','\\\\')
-    command=f'sqlite3 {fp_database2} -cmd ".mode csv" ".import --skip 1 {fp_csv2} changes"'
-    if verbose:
-        print('---COMMAND LINE TO IMPORT DATA---')
-        print(command)
-    subprocess.run(command)
-    if verbose:
-        print('Number of rows after import: ', _get_row_count_in_database_table(fp_database,'changes'))
+#     # import data into table
+#     fp_database2=fp_database.replace('\\','\\\\')
+#     fp_csv=os.path.join(_default_data_folder,'Changes.csv')
+#     fp_csv2=fp_csv.replace('\\','\\\\')
+#     command=f'sqlite3 {fp_database2} -cmd ".mode csv" ".import --skip 1 {fp_csv2} changes"'
+#     if verbose:
+#         print('---COMMAND LINE TO IMPORT DATA---')
+#         print(command)
+#     subprocess.run(command)
+#     if verbose:
+#         print('Number of rows after import: ', _get_row_count_in_database_table(fp_database,'changes'))
     
     
-def _create_changehistory_table(
-        fp_database,
-        verbose=True
-        ):
-    """Creates a changehistory table in the sqlite database.
+# def _create_changehistory_table(
+#         fp_database,
+#         verbose=True
+#         ):
+#     """Creates a changehistory table in the sqlite database.
     
-    Replaces any existing 'changehistory' table.
+#     Replaces any existing 'changehistory' table.
     
-    """
+#     """
     
-    # drop table in database
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query='DROP TABLE IF EXISTS changehistory;'
-        c.execute(query)
-        conn.commit()
+#     # drop table in database
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query='DROP TABLE IF EXISTS changehistory;'
+#         c.execute(query)
+#         conn.commit()
     
-    # create query
-    datatype_map={
-    'integer':'INTEGER',
-    'decimal':'REAL'
-    }
-    query='CREATE TABLE changehistory ('
-    for column_dict in changehistory_schema_metadata['columns']:
-        name=column_dict['name']
-        datatype=datatype_map.get(column_dict['datatype']['base'],'TEXT')
-        query+=f"{name} {datatype}"
-        query+=", "
-    query=query[:-2]
-    query+=');'
+#     # create query
+#     datatype_map={
+#     'integer':'INTEGER',
+#     'decimal':'REAL'
+#     }
+#     query='CREATE TABLE changehistory ('
+#     for column_dict in changehistory_schema_metadata['columns']:
+#         name=column_dict['name']
+#         datatype=datatype_map.get(column_dict['datatype']['base'],'TEXT')
+#         query+=f"{name} {datatype}"
+#         query+=", "
+#     query=query[:-2]
+#     query+=');'
     
-    if verbose:
-        print('---QUERY TO CREATE TABLE---')
-        print(query)
+#     if verbose:
+#         print('---QUERY TO CREATE TABLE---')
+#         print(query)
     
-    # create empty table in database
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
+#     # create empty table in database
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         c.execute(query)
+#         conn.commit()
         
-    # create indexes
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query="CREATE INDEX index_changehistory_GEOGCD ON changehistory(GEOGCD)"
-        c.execute(query)
-        query="CREATE INDEX index_changehistory_PARENTCD ON changehistory(PARENTCD)"
-        c.execute(query)
-        query="CREATE INDEX index_changehistory_STATUS ON changehistory(STATUS)"
-        c.execute(query)
-        conn.commit()
+#     # create indexes
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query="CREATE INDEX index_changehistory_GEOGCD ON changehistory(GEOGCD)"
+#         c.execute(query)
+#         query="CREATE INDEX index_changehistory_PARENTCD ON changehistory(PARENTCD)"
+#         c.execute(query)
+#         query="CREATE INDEX index_changehistory_STATUS ON changehistory(STATUS)"
+#         c.execute(query)
+#         conn.commit()
         
-    # import data into table
-    fp_database2=fp_database.replace('\\','\\\\')
-    fp_csv=os.path.join(_default_data_folder,'ChangeHistory.csv')
-    fp_csv2=fp_csv.replace('\\','\\\\')
-    command=f'sqlite3 {fp_database2} -cmd ".mode csv" ".import --skip 1 {fp_csv2} changehistory"'
-    if verbose:
-        print('---COMMAND LINE TO IMPORT DATA---')
-        print(command)
-    subprocess.run(command)
-    if verbose:
-        print('Number of rows after import: ', _get_row_count_in_database_table(fp_database,'changehistory'))
+#     # import data into table
+#     fp_database2=fp_database.replace('\\','\\\\')
+#     fp_csv=os.path.join(_default_data_folder,'ChangeHistory.csv')
+#     fp_csv2=fp_csv.replace('\\','\\\\')
+#     command=f'sqlite3 {fp_database2} -cmd ".mode csv" ".import --skip 1 {fp_csv2} changehistory"'
+#     if verbose:
+#         print('---COMMAND LINE TO IMPORT DATA---')
+#         print(command)
+#     subprocess.run(command)
+#     if verbose:
+#         print('Number of rows after import: ', _get_row_count_in_database_table(fp_database,'changehistory'))
     
     
     
@@ -777,6 +792,177 @@ def get_local_authority_district_from_region(
         
     return result
     
+
+
+def get_previous_codes(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    table_name='Code_History_Database_May_2023_UK_Changes'
+    
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+            SELECT 
+                GEOGCD_P
+            FROM
+                "{table_name}"
+            WHERE
+                GEOGCD = "{code}"
+            """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()]
+        
+    return result
+
+
+def get_next_codes(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    table_name='Code_History_Database_May_2023_UK_Changes'
+    
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+            SELECT 
+                GEOGCD
+            FROM
+                "{table_name}"
+            WHERE
+                GEOGCD_P = "{code}"
+            """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()]
+        
+    return result
+
+
+def get_latest_codes(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    result=set()
+    
+    def _get_next_codes(
+            result,
+            codes,
+            fp_database
+            ):
+        
+        for code in codes:
+            
+            x=get_next_codes(code,fp_database)  # a list of codes
+            
+            result.update(x)
+            
+            result = _get_next_codes(result,x,fp_database)
+            
+        return result
+    
+    result =  _get_next_codes(result,[code],fp_database)
+    
+    return list(result)
+
+
+def get_parent_codes(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    
+    entity_code=\
+        get_code_entity(
+            code,
+            fp_database
+            )
+        
+    if entity_code in ['E00','W00','E01','W01','E02','W02']:
+    
+        table_name='OA_to_LSOA_to_MSOA_to_LAD_(December_2021)_Lookup_in_England_and_Wales_v3'
+        
+        
+        csvw_metadata=\
+            _read_csvw_metadata_json(
+                table_name
+                )
+            
+            
+        for column_dict in csvw_metadata['columns']:
+            
+            column_entities=column_dict['http://www.purl.org/berg/ogp_vocab/entities']
+            
+            if entity_code in column_entities:
+                
+                column_name=column_dict['name']
+                parent_name=column_dict['http://www.purl.org/berg/ogp_vocab/parent']
+                
+                break
+            
+            else:
+                
+                raise Exception
+        
+    else:
+        
+        raise Exception
+        
+        
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+            SELECT 
+                {parent_name}
+            FROM
+                "{table_name}"
+            WHERE
+                {column_name} = "{code}"
+            
+            """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()]
+        
+    return result
+   
+
+def get_code_entity(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    table_name='Code_History_Database_May_2023_UK_Equivalents'
+    
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+            SELECT 
+                ENTITYCD
+            FROM
+                "{table_name}"
+            WHERE
+                GEOGCD = "{code}"
+            LIMIT 1
+            """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()][0]
+        
+    return result
+    
+
+
+
+
+
+
+
 
 
 

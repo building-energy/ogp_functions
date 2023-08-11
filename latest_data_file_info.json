@@ -23,6 +23,20 @@
     {
         "data_filename": "Code_History_Database_May_2023_UK.zip",
         "data_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
-        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml"
+        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml",
+        "extract": [
+            {
+                "data_filename": "Code_History_Database_May_2023_UK_ChangeHistory.csv",
+                "data_filepath": "ChangeHistory.csv"
+            },
+            {
+                "data_filename": "Code_History_Database_May_2023_UK_Changes.csv",
+                "data_filepath": "Changes.csv"
+            },
+            {
+                "data_filename": "Code_History_Database_May_2023_UK_Equivalents.csv",
+                "data_filepath": "Equivalents.csv"
+            }
+        ]
     }
 ]
