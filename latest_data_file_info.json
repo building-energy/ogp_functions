@@ -2,7 +2,7 @@
     {
         "dataset_name": "Local Authority District to Region (December 2022) Lookup in England",
         "file_download_url": "https://opendata.arcgis.com/api/v3/datasets/78b348cd8fb04037ada3c862aa054428_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1",
-        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml?format=default&output=html"
+        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml"
 
     },
     {

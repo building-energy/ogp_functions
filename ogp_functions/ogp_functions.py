@@ -5,6 +5,7 @@ Created on Wed Aug  9 13:16:59 2023
 @author: cvskf
 """
 
+import urllib
 import urllib.request
 import json
 import os
@@ -16,6 +17,8 @@ import subprocess
 from datetime import datetime
 import pandas as pd
 import csv
+from lxml import etree
+from bs4 import BeautifulSoup
 
 
 _default_data_folder='_data'  # the default
@@ -24,7 +27,72 @@ _default_data_folder='_data'  # the default
 #%% data folder
 
 
-def get_latest_data_file_info():
+def update_data_files(
+        data_folder=_default_data_folder,
+        latest_data_file_info_download_url=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/latest_data_file_info.json'
+        ):
+    """
+    """
+    
+    # download latest data file info
+    _update_latest_data_file_info(
+        data_folder,
+        latest_data_file_info_download_url
+        )
+    
+    # open latest data file info
+    latest_data_file_info=\
+        _get_latest_data_file_info_json(
+                data_folder
+                )
+    
+    # update data files
+    for x in latest_data_file_info:
+        
+        metadata_download_url=x['metadata_download_url']
+        
+        metadata_xml=\
+            get_metadata_xml(
+                metadata_download_url
+                )
+    
+        metadata_dict=\
+            parse_metadata_xml(
+                metadata_xml
+                )
+        
+        print(metadata_dict)
+
+
+
+def _update_latest_data_file_info(
+        data_folder=_default_data_folder,
+        download_url=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/latest_data_file_info.json'
+        ):
+    """
+    # download the latest data file information from GitHub
+
+    # - the file on GitHub can be updated as new data files are released
+    #   on the Open Geography Portal website.
+    
+    # saves the file in the 'data_folder'
+    
+    
+    """
+
+    urllib.request.urlcleanup()
+    
+    fp=os.path.join(data_folder,'latest_data_file_info.json')
+
+    urllib.request.urlretrieve(
+        url=download_url, 
+        filename=fp
+        )
+    
+
+def _get_latest_data_file_info_json(
+        data_folder=_default_data_folder,
+        ):
     """
     # download the latest data file information from GitHub
 
@@ -32,14 +100,54 @@ def get_latest_data_file_info():
     #   on the Open Geography Portal website.
     
     """
+    fp=os.path.join(data_folder,'latest_data_file_info.json')
     
-    download_url=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/latest_data_file_info.json'
-
-    with urllib.request.urlopen(download_url) as url:
-        latest_data_file_info=json.load(url)
-
+    with open(fp) as f:
+        latest_data_file_info=json.load(f)
+        
     return latest_data_file_info
+        
 
+
+def get_metadata_xml(
+        download_url
+        ):
+    """
+    
+    returns XML -> a lxml.etree root node (element)
+    
+    """
+    
+    urllib.request.urlcleanup()
+    
+    with urllib.request.urlopen(download_url) as url:
+        print(url.read())
+        root = etree.fromstring(url.read())
+        
+    return root
+    
+
+def parse_metadata_xml(
+        root
+        ):
+    """
+    """
+
+    d=dict(
+        title=root.xpath('dataIdInfo/idCitation/resTitle')[0].text,
+        creation_date=root.xpath('dataIdInfo/idCitation/date/createDate')[0].text,
+        publication_date=root.xpath('dataIdInfo/idCitation/date/pubDate')[0].text,
+        id_code=root.xpath('dataIdInfo/idCitation/citId/identCode')[0].text,
+        abstract=BeautifulSoup(root.xpath('dataIdInfo/idAbs')[0].text, "lxml").text,
+        purpose=root.xpath('dataIdInfo/idPurp')[0].text
+        )
+
+    d['fieldnames']=[x.strip() for x in d['abstract'].split('Field Names -')[1].split('Field Types -')[0].split(',')]
+    d['fieldtypes']=[x.strip() for x in d['abstract'].split('Field Types -')[1].split('Field Lengths -')[0].split(',')]
+    d['description']=d['abstract'].split('(File Size -')[0].strip()
+
+
+    return d
     
     
 def download_latest_data_files(

@@ -14,6 +14,9 @@ import json
 
 
 
+# get latest_data_file_info JSON
+#latest_data_file_info=ogp_functions.get_latest_data_file_info_json()
+
 #data=ogp_functions.load_data()
 
 #with open('data.json','w') as f:
@@ -27,12 +30,48 @@ import json
 class TestOGPFunctions(unittest.TestCase):
     ""
     
-    def test_get_latest_data_file_info(self):
+    def test_update_data_files(self):
         ""
         
+        ogp_functions.update_data_files()
+    
+    
+    def test__update_latest_data_file_info(self):
+        ""
         
-        result=ogp_functions.get_latest_data_file_info()
-        print(result)
+        ogp_functions._update_latest_data_file_info()
+    
+    
+    def test__get_latest_data_file_info_json(self):
+        ""
+        
+        result=ogp_functions._get_latest_data_file_info_json()
+        #print(result[0])
+    
+    
+    def test__get_metadata_xml(self):
+        ""
+        
+        download_url='https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml'
+        result=ogp_functions._get_metadata_xml(
+            download_url
+            )
+        #print(result)
+    
+    
+    def tst__parse_metadata_xml(self):
+        ""
+        
+        download_url='https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml'
+        metadata_xml=\
+            ogp_functions._get_metadata_xml(
+                download_url
+                )
+        result=\
+            ogp_functions._parse_metadata_xml(
+                metadata_xml
+                )
+        #print(result)
     
     
     
