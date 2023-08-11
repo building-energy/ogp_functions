@@ -3,33 +3,20 @@
         "data_filename": "Local_Authority_District_to_Region_(December_2022)_Lookup_in_England.csv",
         "data_download_url": "https://opendata.arcgis.com/api/v3/datasets/78b348cd8fb04037ada3c862aa054428_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1",
         "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml"
-
     },
     {
-        "filename": "Lookups/CensusLookups/OutputArea2021Lookups/OA_LSOA_MSOA_LAD/2021_12/v3/lookups_2021_census_2021_12_v3_OA_LSOA_MSOA_LAD.csv",
-        "file_url": "https://opendata.arcgis.com/api/v3/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1",
-        "metadata_url": "https://www.arcgis.com/sharing/rest/content/items/b9ca90c10aaa4b8d9791e9859a38ca67/info/metadata/metadata.xml"
+        "data_filename": "OA_to_LSOA_to_MSOA_to_LAD_(December_2021)_Lookup_in_England_and_Wales_v3.csv",
+        "data_download_url": "https://opendata.arcgis.com/api/v3/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1",
+        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/b9ca90c10aaa4b8d9791e9859a38ca67/info/metadata/metadata.xml"
     },
     {
-        "filename": "Postcodes/NSPL/2021Census/2023-05/postcode_nspl_2021census_2023_05.csv",
-        "file_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/data",
-        "metadata_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/info/metadata/metadata.xml"
+        "data_filename": "NSPL21_MAY_2023_UK.zip",
+        "data_download_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/data",
+        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/info/metadata/metadata.xml"
     },
     {
-        "filename": "Products/CodeHistoryDatabase/2023-05/products_code_history_database_2023_05.zip",
-        "file_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/data",
-        "metadata_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/info/metadata/metadata.xml"
-    },
-    {
-        "filename": "Products/CodeHistoryDatabase/2023-05/products_code_history_database_2023_05_change_history.csv",
-        "extract_from": "Products/CodeHistoryDatabase/2023-05/products_code_history_database_2023_05.zip"
-    },
-    {
-        "filename": "Products/CodeHistoryDatabase/2023-05/products_code_history_database_2023_05_changes.csv",
-        "extract_from": "Products/CodeHistoryDatabase/2023-05/products_code_history_database_2023_05.zip"
-    },
-    {
-        "filename": "Products/CodeHistoryDatabase/2023-05/products_code_history_database_2023_05_equivalents.csv",
-        "extract_from": "Products/CodeHistoryDatabase/2023-05/products_code_history_database_2023_05.zip"
+        "data_filename": "Code_History_Database_May_2023_UK.zip",
+        "data_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
+        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml"
     }
 ]

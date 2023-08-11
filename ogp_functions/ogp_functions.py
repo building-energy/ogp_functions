@@ -49,9 +49,9 @@ def update_data_files(
     # update data files
     for x in latest_data_file_info:
         
-        print(x)
+        #print(x)
         
-        file_name=x['datafile_name']
+        file_name=x['data_filename']
         
         # data_file        
         fp=os.path.join(data_folder,file_name)
@@ -65,6 +65,15 @@ def update_data_files(
                 url=download_url, 
                 filename=fp
                 )
+            
+            # unzip data file if needed
+            base,ext=os.path.splitext(fp)
+                    
+            if ext=='.zip':
+                
+                with zipfile.ZipFile(fp, 'r') as zip_ref:
+                    zip_ref.extractall(base)
+        
         
         # metadata file
         fp=os.path.join(data_folder,f'{file_name}-metadata.xml')
@@ -79,33 +88,7 @@ def update_data_files(
                 filename=fp
                 )
             
-        break
         
-        with urllib.request.urlopen(file_download_url) as response:
-            print(response.url)
-            print(response.info().get_filename())
-        
-        
-        
-        
-        
-        metadata_xml=\
-            _get_metadata_xml(
-                metadata_download_url
-                )
-    
-        metadata_dict=\
-            _parse_metadata_xml(
-                metadata_xml
-                )
-        
-        #print(metadata_dict)
-        
-        
-        
-        
-        
-        break
 
 
 

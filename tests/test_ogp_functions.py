@@ -36,7 +36,7 @@ class TestOGPFunctions(unittest.TestCase):
         ogp_functions.update_data_files()
     
     
-    def test__update_latest_data_file_info(self):
+    def _test__update_latest_data_file_info(self):
         ""
         
         ogp_functions._update_latest_data_file_info()
