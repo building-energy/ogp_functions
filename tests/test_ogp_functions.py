@@ -13,7 +13,6 @@ import datetime
 import json
 
 
-
 # get latest_data_file_info JSON
 #latest_data_file_info=ogp_functions.get_latest_data_file_info_json()
 
@@ -26,15 +25,45 @@ import json
 #o=ogp_functions.OGPdata()
 
 
+class TestMainFunctions(unittest.TestCase):
+    ""
+    
+    def test_get_region_from_local_authority_district(self):
+        ""
+        
+        result=ogp_functions.get_region_from_local_authority_district(
+            'E06000001'
+            )
+        print(result)
+        
+        
+    def test_get_local_authority_district_from_region(self):
+        ""
+        
+        result=ogp_functions.get_local_authority_district_from_region(
+            'E12000001'
+            )
+        print(result)
 
-class TestOGPFunctions(unittest.TestCase):
+
+
+
+
+class TestDataFolder(unittest.TestCase):
     ""
     
     def test_update_data_files(self):
         ""
         
         ogp_functions.update_data_files()
-    
+        
+    def test___read_csvw_metadata_json(self):
+        ""
+        
+        result=ogp_functions._read_csvw_metadata_json(
+            'Local_Authority_District_to_Region_(December_2022)_Lookup_in_England.csv'
+            )
+        #print(result)
     
     def _test__update_latest_data_file_info(self):
         ""

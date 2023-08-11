@@ -12,7 +12,13 @@
     {
         "data_filename": "NSPL21_MAY_2023_UK.zip",
         "data_download_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/data",
-        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/info/metadata/metadata.xml"
+        "metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/info/metadata/metadata.xml",
+        "extract": [
+            {
+                "data_filename": "NSPL21_MAY_2023_UK.csv",
+                "data_filepath": "Data/NSPL21_MAY_2023_UK.csv"
+            }
+        ]
     },
     {
         "data_filename": "Code_History_Database_May_2023_UK.zip",

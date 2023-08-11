@@ -1,0 +1,72 @@
+{
+    "@context": "http://www.w3.org/ns/csvw",
+    "@type": "Schema",
+    "columns": [
+        {
+            "name": "OA21CD",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "LSOA21CD",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "LSOA21NM",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "LSOA21NMW",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "MSOA21CD",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "MSOA21NM",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "MSOA21NMW",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "LAD22CD",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "LAD22NM",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "LAD22NMW",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "ObjectId",
+            "datatype": {
+                "base": "integer"
+            }
+        }
+    ]
+}

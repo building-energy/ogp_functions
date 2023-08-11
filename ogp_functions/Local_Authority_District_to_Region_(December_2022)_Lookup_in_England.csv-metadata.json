@@ -1,0 +1,36 @@
+{
+    "@context": "http://www.w3.org/ns/csvw",
+    "@type": "Schema",
+    "columns": [
+        {
+            "name": "LAD22CD",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "LAD22NM",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "RGN22CD",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "RGN22NM",
+            "datatype": {
+                "base": "string"
+            }
+        },
+        {
+            "name": "ObjectId",
+            "datatype": {
+                "base": "integer"
+            }
+        }
+    ]
+}
