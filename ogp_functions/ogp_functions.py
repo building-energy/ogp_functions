@@ -121,7 +121,7 @@ def get_metadata_xml(
     urllib.request.urlcleanup()
     
     with urllib.request.urlopen(download_url) as url:
-        print(url.read())
+        #print(url.read())
         root = etree.fromstring(url.read())
         
     return root
