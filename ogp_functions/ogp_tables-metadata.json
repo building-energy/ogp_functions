@@ -6,7 +6,8 @@
             "@type": "Table",
             "url": "https://opendata.arcgis.com/api/v3/datasets/78b348cd8fb04037ada3c862aa054428_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1",
             "https://purl.org/berg/csvw_functions/vocab/csv_download_url": "https://opendata.arcgis.com/api/v3/datasets/78b348cd8fb04037ada3c862aa054428_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1", 
-            "https://purl.org/berg/csvw_functions/vocab/table_name": "Local_Authority_District_to_Region_December_2022",
+            "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "Local_Authority_District_to_Region_December_2022.csv",
+            "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Local_Authority_District_to_Region_December_2022",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
             "tableSchema": {
@@ -40,7 +41,8 @@
             "@type": "Table",
             "url": "https://opendata.arcgis.com/api/v3/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1",
             "https://purl.org/berg/csvw_functions/vocab/csv_download_url": "https://opendata.arcgis.com/api/v3/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1", 
-            "https://purl.org/berg/csvw_functions/vocab/table_name": "OA_to_LSOA_to_MSOA_to_LAD_December_2021_Lookup_v3",
+            "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3.csv",
+            "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/b9ca90c10aaa4b8d9791e9859a38ca67/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
             "tableSchema": {
@@ -114,7 +116,8 @@
         {
             "@type": "Table",
             "url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/data",
-            "https://purl.org/berg/csvw_functions/vocab/table_name": "NSPL21_MAY_2023_UK",
+            "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "NSPL21_MAY_2023_UK.csv",
+            "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "NSPL21_MAY_2023_UK",
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/data", 
             "https://purl.org/berg/csvw_functions/vocab/zip_filename": "NSPL21_MAY_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Data/NSPL21_MAY_2023_UK.csv",
@@ -277,7 +280,8 @@
         {
             "@type": "Table",
             "url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
-            "https://purl.org/berg/csvw_functions/vocab/table_name": "Code_History_Database_May_2023_UK_ChangeHistory",
+            "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "Code_History_Database_May_2023_UK_ChangeHistory.csv",
+            "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_ChangeHistory",
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
             "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "ChangeHistory.csv",
@@ -431,7 +435,8 @@
         {
             "@type": "Table",
             "url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
-            "https://purl.org/berg/csvw_functions/vocab/table_name": "Code_History_Database_May_2023_UK_Changes",
+            "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "Code_History_Database_May_2023_UK_Changes.csv",
+            "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_Changes",
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
             "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Changes.csv",
@@ -548,7 +553,8 @@
         {
             "@type": "Table",
             "url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
-            "https://purl.org/berg/csvw_functions/vocab/table_name": "Code_History_Database_May_2023_UK_Equivalents",
+            "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "Code_History_Database_May_2023_UK_Equivalents.csv",
+            "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_Equivalents",
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
             "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Equivalents.csv",

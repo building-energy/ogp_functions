@@ -19,230 +19,668 @@ import pandas as pd
 import csv
 from lxml import etree
 from bs4 import BeautifulSoup
+from csvw_functions import csvw_functions_extra
 
 
 _default_data_folder='_data'  # the default
-_default_database_fp=os.path.join(_default_data_folder,'ogp.sqlite')
+_default_database_fp=os.path.join(_default_data_folder,'ogpdata.sqlite')
 
 urllib.request.urlcleanup()
 
 
+
 #%% data folder
 
-
-def update_data_files(
+def set_data_folder(
         data_folder=_default_data_folder,
-        latest_data_file_info_download_url=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/latest_data_file_info.json',
-        fp_database=_default_database_fp,
-        reload_database_tables=False
+        verbose=True,
+        metadata_document_location=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_functions/ogp_tables-metadata.json', 
+        database_name='ogpdata.sqlite',
+        _reload_all_database_tables=False  # for testing
         ):
-    """
-    """
+    ""
     
-    urllib.request.urlcleanup()
-    
-    # download latest data file info
-    _update_latest_data_file_info(
-        data_folder,
-        latest_data_file_info_download_url
+    # download all tables to data_folder
+    fp_metadata=\
+        csvw_functions_extra.download_table_group(
+            metadata_document_location,
+            data_folder=data_folder,
+            verbose=verbose
+            )
+        
+    # import all tables to sqlite
+    csvw_functions_extra.import_table_group_to_sqlite(
+        metadata_document_location=fp_metadata,
+        data_folder=data_folder,
+        database_name=database_name,
+        verbose=verbose,
+        _reload_all_database_tables=_reload_all_database_tables
         )
-    
-    # open latest data file info
-    latest_data_file_info=\
-        _get_latest_data_file_info_json(
-                data_folder
-                )
-    
-    # update data files
-    for x in latest_data_file_info:
-        
-        #print(x)
-        
-        data_filename=x['data_filename']
-        
-        # download data_file        
-        fp=os.path.join(data_folder,data_filename)
-        base,ext=os.path.splitext(fp)
-        download_url=x['data_download_url']
-        
-        if not os.path.exists(fp):
-            
-            urllib.request.urlretrieve(
-                url=download_url, 
-                filename=fp
-                )
-            
-        # unzip data file if needed
-        if ext=='.zip':
-            
-            with zipfile.ZipFile(fp) as z:
-                
-                for y in x['extract']:
-                
-                    fp2=os.path.join(data_folder,y['data_filename'])
-                    
-                    if not os.path.exists(fp2):
-                
-                        with open(fp2, 'wb') as f:
-                            
-                            f.write(z.read(y['data_filepath']))
-                    
-            
-        # download metadata file
-        fp=os.path.join(data_folder,f'{data_filename}-metadata.xml')
-        download_url=x['metadata_download_url']
-        
-        if not os.path.exists(
-                fp
-                ):
-            
-            urllib.request.urlretrieve(
-                url=download_url, 
-                filename=fp
-                )
-            
-        # import data to database
-        
-        if ext=='.zip':
-            table_names=[os.path.splitext(y['data_filename'])[0] for y in x['extract']]
-        else:
-            table_names=[os.path.splitext(data_filename)[0]]
-        
-        for table_name in table_names:
-        
-            if reload_database_tables or \
-                not _check_if_table_exists_in_database(
-                        fp_database, 
-                        table_name
-                        ):
-            
-                csvw_metadata=\
-                    _read_csvw_metadata_json(
-                            table_name
-                            )
-                
-                _create_database_table(
-                    fp_database, 
-                    table_name,
-                    csvw_metadata
-                    )
-        
-        
-        #break
-        
-        
-def _read_csvw_metadata_json(
-        table_name
+
+
+def _read_metadata_table_group_dict(
+        data_folder,
         ):
     ""
     fp=os.path.join(
-        pkg_resources.files(ogp_functions),
-        f'{table_name}.csv-schema-metadata.json'
+        data_folder,
+        'ogp_tables-metadata.json'
         )
     with open(fp) as f:
-        csvw_metadata=json.load(f)
+        metadata_table_group_dic=json.load(f)
         
-    return csvw_metadata
-        
+    return metadata_table_group_dic
         
 
-def _update_latest_data_file_info(
+    
+#%% main functions
+
+def get_region_from_local_authority_district(
+        lad_code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    
+    table_name='Local_Authority_District_to_Region_December_2022'
+    
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+        SELECT
+            RGN22CD
+        FROM
+            "{table_name}"
+        WHERE
+            LAD22CD = "{lad_code}"
+        """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()]
+        
+    return result
+
+
+def get_local_authority_district_from_region(
+        region_code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    table_name='Local_Authority_District_to_Region_December_2022'
+    
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+        SELECT
+            LAD22CD
+        FROM
+            "{table_name}"
+        WHERE
+            RGN22CD = "{region_code}"
+        """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()]
+        
+    return result
+    
+
+
+def get_previous_codes(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    table_name='Code_History_Database_May_2023_UK_Changes'
+    
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+            SELECT 
+                GEOGCD_P
+            FROM
+                "{table_name}"
+            WHERE
+                GEOGCD = "{code}"
+            """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()]
+        
+    return result
+
+
+def get_next_codes(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    table_name='Code_History_Database_May_2023_UK_Changes'
+    
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+            SELECT 
+                GEOGCD
+            FROM
+                "{table_name}"
+            WHERE
+                GEOGCD_P = "{code}"
+            """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()]
+        
+    return result
+
+
+def get_latest_codes(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    result=set()
+    
+    def _get_next_codes(
+            result,
+            codes,
+            fp_database
+            ):
+        
+        for code in codes:
+            
+            x=get_next_codes(code,fp_database)  # a list of codes
+            
+            result.update(x)
+            
+            result = _get_next_codes(result,x,fp_database)
+            
+        return result
+    
+    result =  _get_next_codes(result,[code],fp_database)
+    
+    return list(result)
+
+
+def get_parent_codes(
+        code,
         data_folder=_default_data_folder,
-        download_url=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/latest_data_file_info.json'
+        fp_database=_default_database_fp
         ):
     """
-    # downloads the latest data file information from GitHub
-
-    # - the file on GitHub can be updated as new data files are released
-    #   on the Open Geography Portal website.
-    
-    # saves the file in the 'data_folder'
-    
-    # note sometimes a caching issue means a previous version might be saved instead.
-    
-    
     """
-
-    # --- temporary for development ----
-    import shutil
-    shutil.copyfile(
-        os.path.join(os.pardir,'latest_data_file_info.json'),
-        os.path.join('_data','latest_data_file_info.json')
-        )
-    return
-    # ---
-
-
-
-
-    urllib.request.urlcleanup()
     
-    fp=os.path.join(data_folder,'latest_data_file_info.json')
-
-    urllib.request.urlretrieve(
-        url=download_url, 
-        filename=fp
-        )
-    
-
-def _get_latest_data_file_info_json(
-        data_folder=_default_data_folder,
-        ):
-    """
-    # download the latest data file information from GitHub
-
-    # - the file on GitHub can be updated as new data files are released
-    #   on the Open Geography Portal website.
-    
-    """
-    fp=os.path.join(data_folder,'latest_data_file_info.json')
-    
-    with open(fp) as f:
-        latest_data_file_info=json.load(f)
+    entity_code=\
+        get_code_entity(
+            code,
+            fp_database
+            )
         
-    return latest_data_file_info
+    if entity_code in ['E00','W00','E01','W01','E02','W02']:
+    
+        table_name='OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3'
+        
+        metadata_table_group_dict=\
+            _read_metadata_table_group_dict(
+                data_folder
+                )
+            
+        metadata_table_dict=[x for x in metadata_table_group_dict['tables'] 
+                             if x['https://purl.org/berg/csvw_functions/vocab/sql_table_name']['@value']==table_name][0]
+            
+        for column_dict in metadata_table_dict['tableSchema']['columns']:
+            
+            #print(column_dict)
+            
+            column_entities=[x['@value'] for x in column_dict.get('http://www.purl.org/berg/ogp_vocab/entities',[])]
+            
+            if entity_code in column_entities:
+                
+                column_name=column_dict['name']
+                parent_name=column_dict['http://www.purl.org/berg/ogp_vocab/parent']['@value']
+                
+                break
+            
+            else:
+                
+                raise Exception(f'entity_code {entity_code}')
+        
+    else:
+        
+        raise Exception(f'entity_code {entity_code}')
+        
+        
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+            SELECT 
+                {parent_name}
+            FROM
+                "{table_name}"
+            WHERE
+                {column_name} = "{code}"
+            
+            """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()]
+        
+    return result
+   
+
+def get_code_entity(
+        code,
+        fp_database=_default_database_fp
+        ):
+    """
+    """
+    table_name='Code_History_Database_May_2023_UK_Equivalents'
+    
+    with sqlite3.connect(fp_database) as conn:
+        c = conn.cursor()
+        query=f"""
+            SELECT 
+                ENTITYCD
+            FROM
+                "{table_name}"
+            WHERE
+                GEOGCD = "{code}"
+            LIMIT 1
+            """
+        #print(query)
+        result=[x[0] for x in c.execute(query).fetchall()][0]
+        
+    return result
+    
+
+
+
+
+
+
+
+
+
+
+# def _convert_date_string_to_python_datetime(
+#         date_string
+#         ):
+#     ""
+#     return datetime.strptime(date_string,'%d/%m/%Y')
+
+
+
+    
+# def get_next_code(code):
+#     """
+#     """
+#     with sqlite3.connect(_get_fp_database()) as conn:
+#         c = conn.cursor()
+#         query=f"""
+#             SELECT 
+#                 GEOGCD, OPER_DATE
+#             FROM
+#                 changes
+#             WHERE
+#                 GEOGCD_P = "{code}"
+#             """
+            
+#         result=[(x[0],_convert_date_string_to_python_datetime(x[1])) 
+#                  for x in c.execute(query).fetchall()]
+        
+#         if len(result)==0:
+            
+#             raise ValueError('Code does not have a next code')
+            
+#         elif len(result)>1:
+            
+#             raise Exception('...wasnt execting a result of more that one item here...???')
+            
+#         else:
+            
+#             return result[0]
+    
+
+# def get_latest_code(code):
+#     """
+#     """
+#     while True:
+        
+#         try:
+            
+#             next_code = get_next_code(code)
+            
+#         except ValueError:
+            
+#             return code
+        
+#         code = next_code
+
+
+# def get_parent_codes(
+#         code,
+#         status='live'  # 'live' or 'terminated' or none 
+#         ):
+#     """
+#     """
+   
+    
+#     with sqlite3.connect(_get_fp_database()) as conn:
+#         c = conn.cursor()
+        
+#         query=f"""
+#             SELECT 
+#                 PARENTCD
+#             FROM
+#                 changehistory
+#             WHERE
+#                 GEOGCD = "{code}"
+#             """
+                
+#         if not status is None:
+            
+#             query+=f""" 
+#                  AND STATUS="{status}"
+#                 """
+            
+#         result=[x[0] for x in c.execute(query).fetchall()]
+        
+#         return result
+    
+    
+# def get_child_codes(
+#         code,
+#         status='live'  # 'live' or 'terminated' or none 
+#         ):
+#     """
+#     """
+   
+    
+#     with sqlite3.connect(_get_fp_database()) as conn:
+#         c = conn.cursor()
+        
+#         query=f"""
+#             SELECT 
+#                 GEOGCD
+#             FROM
+#                 changehistory
+#             WHERE
+#                 PARENTCD = "{code}"
+#             """
+                
+#         if not status is None:
+            
+#             query+=f""" 
+#                  AND STATUS="{status}"
+#                 """
+            
+#         result=[x[0] for x in c.execute(query).fetchall()]
+        
+#         return result
+    
+    
+# def get_ancestor_codes(
+#         code,
+#         status='live'  # 'live' or 'terminated' or none 
+#         ):
+#     """
+#     """
+#     result=set()
+    
+#     def _get_parent_codes(
+#             result,
+#             codes,
+#             status):
+        
+#         for code in codes:
+            
+#             x=get_parent_codes(code,status)  # a list of codes
+            
+#             result.update(x)
+            
+#             result = _get_parent_codes(result,x,status)
+            
+#         return result
+    
+#     result =  _get_parent_codes(result,[code],status)
+    
+#     return result
+
+
+# def get_descendent_codes(
+#         code,
+#         status='live'  # 'live' or 'terminated' or none 
+#         ):
+#     """
+#     """
+#     result=set()
+    
+#     def _get_child_codes(
+#             result,
+#             codes,
+#             status):
+        
+#         for code in codes:
+            
+#             x=get_child_codes(code,status)  # a list of codes
+            
+#             result.update(x)
+            
+#             result = _get_parent_child(result,x,status)
+            
+#         return result
+    
+#     result =  _get_parent_codes(result,[code],status)
+    
+#     return result
+
+
+
+
+
+#%% data folder - old
+
+
+# def update_data_files(
+#         data_folder=_default_data_folder,
+#         latest_data_file_info_download_url=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/latest_data_file_info.json',
+#         fp_database=_default_database_fp,
+#         reload_database_tables=False
+#         ):
+#     """
+#     """
+    
+#     urllib.request.urlcleanup()
+    
+#     # download latest data file info
+#     _update_latest_data_file_info(
+#         data_folder,
+#         latest_data_file_info_download_url
+#         )
+    
+#     # open latest data file info
+#     latest_data_file_info=\
+#         _get_latest_data_file_info_json(
+#                 data_folder
+#                 )
+    
+#     # update data files
+#     for x in latest_data_file_info:
+        
+#         #print(x)
+        
+#         data_filename=x['data_filename']
+        
+#         # download data_file        
+#         fp=os.path.join(data_folder,data_filename)
+#         base,ext=os.path.splitext(fp)
+#         download_url=x['data_download_url']
+        
+#         if not os.path.exists(fp):
+            
+#             urllib.request.urlretrieve(
+#                 url=download_url, 
+#                 filename=fp
+#                 )
+            
+#         # unzip data file if needed
+#         if ext=='.zip':
+            
+#             with zipfile.ZipFile(fp) as z:
+                
+#                 for y in x['extract']:
+                
+#                     fp2=os.path.join(data_folder,y['data_filename'])
+                    
+#                     if not os.path.exists(fp2):
+                
+#                         with open(fp2, 'wb') as f:
+                            
+#                             f.write(z.read(y['data_filepath']))
+                    
+            
+#         # download metadata file
+#         fp=os.path.join(data_folder,f'{data_filename}-metadata.xml')
+#         download_url=x['metadata_download_url']
+        
+#         if not os.path.exists(
+#                 fp
+#                 ):
+            
+#             urllib.request.urlretrieve(
+#                 url=download_url, 
+#                 filename=fp
+#                 )
+            
+#         # import data to database
+        
+#         if ext=='.zip':
+#             table_names=[os.path.splitext(y['data_filename'])[0] for y in x['extract']]
+#         else:
+#             table_names=[os.path.splitext(data_filename)[0]]
+        
+#         for table_name in table_names:
+        
+#             if reload_database_tables or \
+#                 not _check_if_table_exists_in_database(
+#                         fp_database, 
+#                         table_name
+#                         ):
+            
+#                 csvw_metadata=\
+#                     _read_csvw_metadata_json(
+#                             table_name
+#                             )
+                
+#                 _create_database_table(
+#                     fp_database, 
+#                     table_name,
+#                     csvw_metadata
+#                     )
+        
+        
+#         #break
+        
+        
+
+        
+
+# def _update_latest_data_file_info(
+#         data_folder=_default_data_folder,
+#         download_url=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/latest_data_file_info.json'
+#         ):
+#     """
+#     # downloads the latest data file information from GitHub
+
+#     # - the file on GitHub can be updated as new data files are released
+#     #   on the Open Geography Portal website.
+    
+#     # saves the file in the 'data_folder'
+    
+#     # note sometimes a caching issue means a previous version might be saved instead.
+    
+    
+#     """
+
+#     # --- temporary for development ----
+#     import shutil
+#     shutil.copyfile(
+#         os.path.join(os.pardir,'latest_data_file_info.json'),
+#         os.path.join('_data','latest_data_file_info.json')
+#         )
+#     return
+#     # ---
+
+
+
+
+#     urllib.request.urlcleanup()
+    
+#     fp=os.path.join(data_folder,'latest_data_file_info.json')
+
+#     urllib.request.urlretrieve(
+#         url=download_url, 
+#         filename=fp
+#         )
+    
+
+# def _get_latest_data_file_info_json(
+#         data_folder=_default_data_folder,
+#         ):
+#     """
+#     # download the latest data file information from GitHub
+
+#     # - the file on GitHub can be updated as new data files are released
+#     #   on the Open Geography Portal website.
+    
+#     """
+#     fp=os.path.join(data_folder,'latest_data_file_info.json')
+    
+#     with open(fp) as f:
+#         latest_data_file_info=json.load(f)
+        
+#     return latest_data_file_info
         
 
 
-def _get_metadata_xml(
-        download_url
-        ):
-    """
+# def _get_metadata_xml(
+#         download_url
+#         ):
+#     """
     
-    returns XML -> a lxml.etree root node (element)
+#     returns XML -> a lxml.etree root node (element)
     
-    """
+#     """
     
-    urllib.request.urlcleanup()
+#     urllib.request.urlcleanup()
     
-    with urllib.request.urlopen(download_url) as url:
-        #print(url.read())
-        root = etree.fromstring(url.read())
+#     with urllib.request.urlopen(download_url) as url:
+#         #print(url.read())
+#         root = etree.fromstring(url.read())
         
-    return root
+#     return root
     
 
-def _parse_metadata_xml(
-        root
-        ):
-    """
-    """
+# def _parse_metadata_xml(
+#         root
+#         ):
+#     """
+#     """
 
-    d=dict(
-        title=root.xpath('dataIdInfo/idCitation/resTitle')[0].text,
-        creation_date=root.xpath('dataIdInfo/idCitation/date/createDate')[0].text,
-        publication_date=root.xpath('dataIdInfo/idCitation/date/pubDate')[0].text,
-        id_code=root.xpath('dataIdInfo/idCitation/citId/identCode')[0].text,
-        abstract=BeautifulSoup(root.xpath('dataIdInfo/idAbs')[0].text, "lxml").text,
-        purpose=root.xpath('dataIdInfo/idPurp')[0].text
-        )
+#     d=dict(
+#         title=root.xpath('dataIdInfo/idCitation/resTitle')[0].text,
+#         creation_date=root.xpath('dataIdInfo/idCitation/date/createDate')[0].text,
+#         publication_date=root.xpath('dataIdInfo/idCitation/date/pubDate')[0].text,
+#         id_code=root.xpath('dataIdInfo/idCitation/citId/identCode')[0].text,
+#         abstract=BeautifulSoup(root.xpath('dataIdInfo/idAbs')[0].text, "lxml").text,
+#         purpose=root.xpath('dataIdInfo/idPurp')[0].text
+#         )
 
-    d['fieldnames']=[x.strip() for x in d['abstract'].split('Field Names -')[1].split('Field Types -')[0].split(',')]
-    d['fieldtypes']=[x.strip() for x in d['abstract'].split('Field Types -')[1].split('Field Lengths -')[0].split(',')]
-    d['description']=d['abstract'].split('(File Size -')[0].strip()
+#     d['fieldnames']=[x.strip() for x in d['abstract'].split('Field Names -')[1].split('Field Types -')[0].split(',')]
+#     d['fieldtypes']=[x.strip() for x in d['abstract'].split('Field Types -')[1].split('Field Lengths -')[0].split(',')]
+#     d['description']=d['abstract'].split('(File Size -')[0].strip()
 
 
-    return d
+#     return d
     
     
 # def download_latest_data_files(
@@ -503,92 +941,92 @@ def _parse_metadata_xml(
 
 
 
-#%% database functions
+#%% database functions - old
 
 # def _get_fp_database():
 #     ""
 #     return os.path.join(_default_data_folder,'ogp.sqlite')
 
 
-def _check_if_table_exists_in_database(
-        fp_database,
-        table_name
-        ):
-    ""
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"SELECT count(*) FROM sqlite_master WHERE type='table' AND name='{table_name}';"
-        return True if c.execute(query).fetchall()[0][0] else False
+# def _check_if_table_exists_in_database(
+#         fp_database,
+#         table_name
+#         ):
+#     ""
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query=f"SELECT count(*) FROM sqlite_master WHERE type='table' AND name='{table_name}';"
+#         return True if c.execute(query).fetchall()[0][0] else False
     
     
-def _create_database_table(
-        fp_database,
-        table_name,
-        csvw_metadata,
-        verbose=True
-        ):
-    """Creates a table in the sqlite database.
+# def _create_database_table(
+#         fp_database,
+#         table_name,
+#         csvw_metadata,
+#         verbose=True
+#         ):
+#     """Creates a table in the sqlite database.
     
-    Replaces any existing table.
+#     Replaces any existing table.
     
-    """
+#     """
     
-    # drop table in database
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f'DROP TABLE IF EXISTS "{table_name}";'
-        print(query)
-        c.execute(query)
-        conn.commit()
+#     # drop table in database
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query=f'DROP TABLE IF EXISTS "{table_name}";'
+#         print(query)
+#         c.execute(query)
+#         conn.commit()
     
-    # create query
-    datatype_map={
-    'integer':'INTEGER',
-    'decimal':'REAL'
-    }
-    query=f'CREATE TABLE "{table_name}" ('
-    for column_dict in csvw_metadata['columns']:
-        name=column_dict['name']
-        datatype=datatype_map.get(column_dict['datatype']['base'],'TEXT')
-        query+=f"{name} {datatype}"
-        query+=", "
-    query=query[:-2]
-    query+=');'
+#     # create query
+#     datatype_map={
+#     'integer':'INTEGER',
+#     'decimal':'REAL'
+#     }
+#     query=f'CREATE TABLE "{table_name}" ('
+#     for column_dict in csvw_metadata['columns']:
+#         name=column_dict['name']
+#         datatype=datatype_map.get(column_dict['datatype']['base'],'TEXT')
+#         query+=f"{name} {datatype}"
+#         query+=", "
+#     query=query[:-2]
+#     query+=');'
     
-    if verbose:
-        print('---QUERY TO CREATE TABLE---')
-        print(query)
+#     if verbose:
+#         print('---QUERY TO CREATE TABLE---')
+#         print(query)
     
-    # create empty table in database
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
+#     # create empty table in database
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         c.execute(query)
+#         conn.commit()
         
-    # create indexes
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        for column_dict in csvw_metadata['columns']:
-            column_name=column_dict['name']
-            notes=column_dict.get('notes')
-            if notes=='SETINDEX':
-                index_name=f'{table_name}_{column_name}'
-                query=f'CREATE INDEX "{index_name}" ON "{table_name}"("{column_name}")'
-                print(query)
-                c.execute(query)
-                conn.commit()
+#     # create indexes
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         for column_dict in csvw_metadata['columns']:
+#             column_name=column_dict['name']
+#             notes=column_dict.get('notes')
+#             if notes=='SETINDEX':
+#                 index_name=f'{table_name}_{column_name}'
+#                 query=f'CREATE INDEX "{index_name}" ON "{table_name}"("{column_name}")'
+#                 print(query)
+#                 c.execute(query)
+#                 conn.commit()
     
-    # import data into table
-    fp_database2=fp_database.replace('\\','\\\\')
-    fp_csv=os.path.join(_default_data_folder,f'{table_name}.csv')
-    fp_csv2=fp_csv.replace('\\','\\\\')
-    command=f'sqlite3 {fp_database2} -cmd ".mode csv" ".import --skip 1 {fp_csv2} {table_name}"'
-    if verbose:
-        print('---COMMAND LINE TO IMPORT DATA---')
-        print(command)
-    subprocess.run(command)
-    if verbose:
-        print('Number of rows after import: ', _get_row_count_in_database_table(fp_database,table_name))
+#     # import data into table
+#     fp_database2=fp_database.replace('\\','\\\\')
+#     fp_csv=os.path.join(_default_data_folder,f'{table_name}.csv')
+#     fp_csv2=fp_csv.replace('\\','\\\\')
+#     command=f'sqlite3 {fp_database2} -cmd ".mode csv" ".import --skip 1 {fp_csv2} {table_name}"'
+#     if verbose:
+#         print('---COMMAND LINE TO IMPORT DATA---')
+#         print(command)
+#     subprocess.run(command)
+#     if verbose:
+#         print('Number of rows after import: ', _get_row_count_in_database_table(fp_database,table_name))
     
     
     
@@ -724,419 +1162,20 @@ def _create_database_table(
     
     
         
-def _get_row_count_in_database_table(
-        fp_database,
-        table_name,
-        column_name='*'
-        ):
-    """Gets number of rows in table
-    
-    """
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f'SELECT COUNT({column_name}) FROM "{table_name}"'
-        return c.execute(query).fetchone()[0]
-    
-
-
-
-
-    
-#%% main functions
-
-def get_region_from_local_authority_district(
-        lad_code,
-        fp_database=_default_database_fp
-        ):
-    """
-    """
-    
-    table_name='Local_Authority_District_to_Region_(December_2022)_Lookup_in_England'
-    
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-        SELECT
-            RGN22CD
-        FROM
-            "{table_name}"
-        WHERE
-            LAD22CD = "{lad_code}"
-        """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
-        
-    return result
-
-
-def get_local_authority_district_from_region(
-        region_code,
-        fp_database=_default_database_fp
-        ):
-    """
-    """
-    table_name='Local_Authority_District_to_Region_(December_2022)_Lookup_in_England'
-    
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-        SELECT
-            LAD22CD
-        FROM
-            "{table_name}"
-        WHERE
-            RGN22CD = "{region_code}"
-        """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
-        
-    return result
-    
-
-
-def get_previous_codes(
-        code,
-        fp_database=_default_database_fp
-        ):
-    """
-    """
-    table_name='Code_History_Database_May_2023_UK_Changes'
-    
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-            SELECT 
-                GEOGCD_P
-            FROM
-                "{table_name}"
-            WHERE
-                GEOGCD = "{code}"
-            """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
-        
-    return result
-
-
-def get_next_codes(
-        code,
-        fp_database=_default_database_fp
-        ):
-    """
-    """
-    table_name='Code_History_Database_May_2023_UK_Changes'
-    
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-            SELECT 
-                GEOGCD
-            FROM
-                "{table_name}"
-            WHERE
-                GEOGCD_P = "{code}"
-            """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
-        
-    return result
-
-
-def get_latest_codes(
-        code,
-        fp_database=_default_database_fp
-        ):
-    """
-    """
-    result=set()
-    
-    def _get_next_codes(
-            result,
-            codes,
-            fp_database
-            ):
-        
-        for code in codes:
-            
-            x=get_next_codes(code,fp_database)  # a list of codes
-            
-            result.update(x)
-            
-            result = _get_next_codes(result,x,fp_database)
-            
-        return result
-    
-    result =  _get_next_codes(result,[code],fp_database)
-    
-    return list(result)
-
-
-def get_parent_codes(
-        code,
-        fp_database=_default_database_fp
-        ):
-    """
-    """
-    
-    entity_code=\
-        get_code_entity(
-            code,
-            fp_database
-            )
-        
-    if entity_code in ['E00','W00','E01','W01','E02','W02']:
-    
-        table_name='OA_to_LSOA_to_MSOA_to_LAD_(December_2021)_Lookup_in_England_and_Wales_v3'
-        
-        
-        csvw_metadata=\
-            _read_csvw_metadata_json(
-                table_name
-                )
-            
-            
-        for column_dict in csvw_metadata['columns']:
-            
-            column_entities=column_dict['http://www.purl.org/berg/ogp_vocab/entities']
-            
-            if entity_code in column_entities:
-                
-                column_name=column_dict['name']
-                parent_name=column_dict['http://www.purl.org/berg/ogp_vocab/parent']
-                
-                break
-            
-            else:
-                
-                raise Exception
-        
-    else:
-        
-        raise Exception
-        
-        
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-            SELECT 
-                {parent_name}
-            FROM
-                "{table_name}"
-            WHERE
-                {column_name} = "{code}"
-            
-            """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
-        
-    return result
-   
-
-def get_code_entity(
-        code,
-        fp_database=_default_database_fp
-        ):
-    """
-    """
-    table_name='Code_History_Database_May_2023_UK_Equivalents'
-    
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-            SELECT 
-                ENTITYCD
-            FROM
-                "{table_name}"
-            WHERE
-                GEOGCD = "{code}"
-            LIMIT 1
-            """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()][0]
-        
-    return result
-    
-
-
-
-
-
-
-
-
-
-
-# def _convert_date_string_to_python_datetime(
-#         date_string
+# def _get_row_count_in_database_table(
+#         fp_database,
+#         table_name,
+#         column_name='*'
 #         ):
-#     ""
-#     return datetime.strptime(date_string,'%d/%m/%Y')
-
-
-
+#     """Gets number of rows in table
     
-# def get_next_code(code):
 #     """
-#     """
-#     with sqlite3.connect(_get_fp_database()) as conn:
+#     with sqlite3.connect(fp_database) as conn:
 #         c = conn.cursor()
-#         query=f"""
-#             SELECT 
-#                 GEOGCD, OPER_DATE
-#             FROM
-#                 changes
-#             WHERE
-#                 GEOGCD_P = "{code}"
-#             """
-            
-#         result=[(x[0],_convert_date_string_to_python_datetime(x[1])) 
-#                  for x in c.execute(query).fetchall()]
-        
-#         if len(result)==0:
-            
-#             raise ValueError('Code does not have a next code')
-            
-#         elif len(result)>1:
-            
-#             raise Exception('...wasnt execting a result of more that one item here...???')
-            
-#         else:
-            
-#             return result[0]
+#         query=f'SELECT COUNT({column_name}) FROM "{table_name}"'
+#         return c.execute(query).fetchone()[0]
     
 
-# def get_latest_code(code):
-#     """
-#     """
-#     while True:
-        
-#         try:
-            
-#             next_code = get_next_code(code)
-            
-#         except ValueError:
-            
-#             return code
-        
-#         code = next_code
-
-
-# def get_parent_codes(
-#         code,
-#         status='live'  # 'live' or 'terminated' or none 
-#         ):
-#     """
-#     """
-   
-    
-#     with sqlite3.connect(_get_fp_database()) as conn:
-#         c = conn.cursor()
-        
-#         query=f"""
-#             SELECT 
-#                 PARENTCD
-#             FROM
-#                 changehistory
-#             WHERE
-#                 GEOGCD = "{code}"
-#             """
-                
-#         if not status is None:
-            
-#             query+=f""" 
-#                  AND STATUS="{status}"
-#                 """
-            
-#         result=[x[0] for x in c.execute(query).fetchall()]
-        
-#         return result
-    
-    
-# def get_child_codes(
-#         code,
-#         status='live'  # 'live' or 'terminated' or none 
-#         ):
-#     """
-#     """
-   
-    
-#     with sqlite3.connect(_get_fp_database()) as conn:
-#         c = conn.cursor()
-        
-#         query=f"""
-#             SELECT 
-#                 GEOGCD
-#             FROM
-#                 changehistory
-#             WHERE
-#                 PARENTCD = "{code}"
-#             """
-                
-#         if not status is None:
-            
-#             query+=f""" 
-#                  AND STATUS="{status}"
-#                 """
-            
-#         result=[x[0] for x in c.execute(query).fetchall()]
-        
-#         return result
-    
-    
-# def get_ancestor_codes(
-#         code,
-#         status='live'  # 'live' or 'terminated' or none 
-#         ):
-#     """
-#     """
-#     result=set()
-    
-#     def _get_parent_codes(
-#             result,
-#             codes,
-#             status):
-        
-#         for code in codes:
-            
-#             x=get_parent_codes(code,status)  # a list of codes
-            
-#             result.update(x)
-            
-#             result = _get_parent_codes(result,x,status)
-            
-#         return result
-    
-#     result =  _get_parent_codes(result,[code],status)
-    
-#     return result
-
-
-# def get_descendent_codes(
-#         code,
-#         status='live'  # 'live' or 'terminated' or none 
-#         ):
-#     """
-#     """
-#     result=set()
-    
-#     def _get_child_codes(
-#             result,
-#             codes,
-#             status):
-        
-#         for code in codes:
-            
-#             x=get_child_codes(code,status)  # a list of codes
-            
-#             result.update(x)
-            
-#             result = _get_parent_child(result,x,status)
-            
-#         return result
-    
-#     result =  _get_parent_codes(result,[code],status)
-    
-#     return result
 
 
 

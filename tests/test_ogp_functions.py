@@ -130,84 +130,96 @@ class TestMainFunctions(unittest.TestCase):
 class TestDataFolder(unittest.TestCase):
     ""
     
-    def test_update_data_files(self):
+    def test_set_data_folder(self):
         ""
         
-        ogp_functions.update_data_files(
+        fp=r'C:\Users\cvskf\OneDrive - Loughborough University\_Git\building-energy\ogp_functions\ogp_functions\ogp_tables-metadata.json'
+        
+        ogp_functions.set_data_folder(
+            metadata_document_location=fp,
+            #verbose=False,
+            #_reload_all_database_tables=True
+            )
+        
+    
+    # def test_update_data_files(self):
+    #     ""
+        
+    #     ogp_functions.update_data_files(
             
-            reload_database_tables=False
-            )
+    #         reload_database_tables=False
+    #         )
         
-    def test___read_csvw_metadata_json(self):
-        ""
+    # def test___read_csvw_metadata_json(self):
+    #     ""
         
-        result=ogp_functions._read_csvw_metadata_json(
-            'Local_Authority_District_to_Region_(December_2022)_Lookup_in_England'
-            )
-        #print(result)
+    #     result=ogp_functions._read_csvw_metadata_json(
+    #         'Local_Authority_District_to_Region_(December_2022)_Lookup_in_England'
+    #         )
+    #     #print(result)
     
-    def _test__update_latest_data_file_info(self):
-        ""
+    # def _test__update_latest_data_file_info(self):
+    #     ""
         
-        ogp_functions._update_latest_data_file_info()
-    
-    
-    def test__get_latest_data_file_info_json(self):
-        ""
-        
-        result=ogp_functions._get_latest_data_file_info_json()
-        #print(result[0])
+    #     ogp_functions._update_latest_data_file_info()
     
     
-    def test__get_metadata_xml(self):
-        ""
+    # def test__get_latest_data_file_info_json(self):
+    #     ""
         
-        download_url='https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml'
-        result=ogp_functions._get_metadata_xml(
-            download_url
-            )
-        #print(result)
+    #     result=ogp_functions._get_latest_data_file_info_json()
+    #     #print(result[0])
     
     
-    def tst__parse_metadata_xml(self):
-        ""
+    # def test__get_metadata_xml(self):
+    #     ""
         
-        download_url='https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml'
-        metadata_xml=\
-            ogp_functions._get_metadata_xml(
-                download_url
-                )
-        result=\
-            ogp_functions._parse_metadata_xml(
-                metadata_xml
-                )
-        #print(result)
+    #     download_url='https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml'
+    #     result=ogp_functions._get_metadata_xml(
+    #         download_url
+    #         )
+    #     #print(result)
+    
+    
+    # def tst__parse_metadata_xml(self):
+    #     ""
+        
+    #     download_url='https://www.arcgis.com/sharing/rest/content/items/78b348cd8fb04037ada3c862aa054428/info/metadata/metadata.xml'
+    #     metadata_xml=\
+    #         ogp_functions._get_metadata_xml(
+    #             download_url
+    #             )
+    #     result=\
+    #         ogp_functions._parse_metadata_xml(
+    #             metadata_xml
+    #             )
+    #     #print(result)
     
     
     
-    def _test_download_latest_data_files(self):
-        ""
+    # def _test_download_latest_data_files(self):
+    #     ""
         
-        #ogp_functions.download_latest_data_files()
+    #     #ogp_functions.download_latest_data_files()
         
         
         
     
-    def _test_load_data(self):
-        ""
+    # def _test_load_data(self):
+    #     ""
         
-        result=ogp_functions.load_data()
+    #     result=ogp_functions.load_data()
         
-        print(len(result))
-        #print(result)
-        #print([result[x] for x in list(result.keys())[:]])
+    #     print(len(result))
+    #     #print(result)
+    #     #print([result[x] for x in list(result.keys())[:]])
         
         
-    def _test_load_data2(self):
-         ""
+    # def _test_load_data2(self):
+    #      ""
          
-         with open('data.json') as f:
-             result=json.load(f)
+    #      with open('data.json') as f:
+    #          result=json.load(f)
     
     
     
