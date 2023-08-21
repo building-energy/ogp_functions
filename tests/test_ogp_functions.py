@@ -18,13 +18,13 @@ import os
 class TestDataFolder(unittest.TestCase):
     ""
     
-    def _test_set_data_folder(self):
+    def test_set_data_folder(self):
         ""
         
         fp=os.path.join(os.pardir,'ogp_tables-metadata.json')
         
         ogp_functions.set_data_folder(
-            metadata_document_location=fp,
+            #metadata_document_location=fp,
             #overwrite_existing_files=True,
             #remove_existing_tables=True,
             verbose=True
