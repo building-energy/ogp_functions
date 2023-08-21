@@ -286,13 +286,13 @@
             "url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
             "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "Code_History_Database_May_2023_UK_ChangeHistory.csv",
             "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_ChangeHistory",
+            "https://purl.org/berg/csvw_functions/vocab/sql_remove_existing_table": true,
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
             "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "ChangeHistory.csv",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
             "tableSchema": {
-                "primaryKey":["GEOGCD","OPER_DATE"],
                 "columns": [
                     {
                         "name": "GEOGCD",
@@ -442,13 +442,13 @@
             "url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
             "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "Code_History_Database_May_2023_UK_Changes.csv",
             "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_Changes",
+            "https://purl.org/berg/csvw_functions/vocab/sql_remove_existing_table": true,
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
             "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Changes.csv",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
             "tableSchema": {
-                "primaryKey":["GEOGCD","OPER_DATE"],
                 "columns": [
                     {
                         "name": "GEOGCD",
@@ -561,13 +561,13 @@
             "url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
             "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "Code_History_Database_May_2023_UK_Equivalents.csv",
             "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_Equivalents",
+            "https://purl.org/berg/csvw_functions/vocab/sql_remove_existing_table": true,
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
             "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Equivalents.csv",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
             "tableSchema": {
-                "primaryKey":["GEOGCD","OPER_DATE"],
                 "columns": [
                     {
                         "name": "GEOGCD", 
