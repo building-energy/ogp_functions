@@ -23,7 +23,7 @@ from csvw_functions import csvw_functions_extra
 
 
 _default_data_folder='_data'  # the default
-_default_database_fp=os.path.join(_default_data_folder,'ogpdata.sqlite')
+_default_database_name='ogp_data.sqlite'
 
 urllib.request.urlcleanup()
 
@@ -32,11 +32,12 @@ urllib.request.urlcleanup()
 #%% data folder
 
 def set_data_folder(
+        metadata_document_location=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_tables-metadata.json', 
         data_folder=_default_data_folder,
-        verbose=True,
-        metadata_document_location=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_functions/ogp_tables-metadata.json', 
-        database_name='ogpdata.sqlite',
-        _reload_all_database_tables=False  # for testing
+        overwrite_existing_files=False,
+        database_name=_default_database_name,
+        remove_existing_tables=False,
+        verbose=False
         ):
     ""
     
@@ -45,16 +46,19 @@ def set_data_folder(
         csvw_functions_extra.download_table_group(
             metadata_document_location,
             data_folder=data_folder,
+            overwrite_existing_files=overwrite_existing_files,
             verbose=verbose
             )
+
+    #return
         
     # import all tables to sqlite
     csvw_functions_extra.import_table_group_to_sqlite(
         metadata_document_location=fp_metadata,
         data_folder=data_folder,
         database_name=database_name,
-        verbose=verbose,
-        _reload_all_database_tables=_reload_all_database_tables
+        remove_existing_tables=remove_existing_tables,
+        verbose=verbose
         )
 
 
@@ -77,7 +81,7 @@ def _read_metadata_table_group_dict(
 
 def get_region_from_local_authority_district(
         lad_code,
-        fp_database=_default_database_fp
+        fp_database=os.path.join(_default_data_folder,_default_database_name)
         ):
     """
     """
@@ -102,10 +106,11 @@ def get_region_from_local_authority_district(
 
 def get_local_authority_district_from_region(
         region_code,
-        fp_database=_default_database_fp
+        fp_database=os.path.join(_default_data_folder,_default_database_name)
         ):
     """
     """
+    
     table_name='Local_Authority_District_to_Region_December_2022'
     
     with sqlite3.connect(fp_database) as conn:
@@ -127,10 +132,11 @@ def get_local_authority_district_from_region(
 
 def get_previous_codes(
         code,
-        fp_database=_default_database_fp
+        fp_database=os.path.join(_default_data_folder,_default_database_name)
         ):
     """
     """
+    
     table_name='Code_History_Database_May_2023_UK_Changes'
     
     with sqlite3.connect(fp_database) as conn:
@@ -151,10 +157,11 @@ def get_previous_codes(
 
 def get_next_codes(
         code,
-        fp_database=_default_database_fp
+        fp_database=os.path.join(_default_data_folder,_default_database_name)
         ):
     """
     """
+    
     table_name='Code_History_Database_May_2023_UK_Changes'
     
     with sqlite3.connect(fp_database) as conn:
@@ -175,10 +182,11 @@ def get_next_codes(
 
 def get_latest_codes(
         code,
-        fp_database=_default_database_fp
+        fp_database=os.path.join(_default_data_folder,_default_database_name)
         ):
     """
     """
+    
     result=set()
     
     def _get_next_codes(
@@ -205,7 +213,7 @@ def get_latest_codes(
 def get_parent_codes(
         code,
         data_folder=_default_data_folder,
-        fp_database=_default_database_fp
+        fp_database=os.path.join(_default_data_folder,_default_database_name)
         ):
     """
     """
@@ -269,10 +277,11 @@ def get_parent_codes(
 
 def get_code_entity(
         code,
-        fp_database=_default_database_fp
+        fp_database=os.path.join(_default_data_folder,_default_database_name)
         ):
     """
     """
+    
     table_name='Code_History_Database_May_2023_UK_Equivalents'
     
     with sqlite3.connect(fp_database) as conn:

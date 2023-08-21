@@ -137,8 +137,9 @@ class TestDataFolder(unittest.TestCase):
         
         ogp_functions.set_data_folder(
             metadata_document_location=fp,
-            #verbose=False,
-            #_reload_all_database_tables=True
+            #overwrite_existing_files=True,
+            remove_existing_tables=True,
+            verbose=True
             )
         
     
