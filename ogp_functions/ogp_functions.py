@@ -77,228 +77,355 @@ def _read_metadata_table_group_dict(
         
 
     
-#%% main functions
+# #%% Local_Authority_District_to_Region functions
 
-def get_region_from_local_authority_district(
-        lad_code,
-        fp_database=os.path.join(_default_data_folder,_default_database_name)
-        ):
-    """
-    """
+# def get_region_from_local_authority_district(
+#         lad_code,
+#         fp_database=os.path.join(_default_data_folder,_default_database_name)
+#         ):
+#     """
+#     """
     
-    table_name='Local_Authority_District_to_Region_December_2022'
+#     table_name='Local_Authority_District_to_Region_December_2022'
     
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-        SELECT
-            RGN22CD
-        FROM
-            "{table_name}"
-        WHERE
-            LAD22CD = "{lad_code}"
-        """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query=f"""
+#         SELECT
+#             RGN22CD
+#         FROM
+#             "{table_name}"
+#         WHERE
+#             LAD22CD = "{lad_code}"
+#         """
+#         #print(query)
+#         result=[x[0] for x in c.execute(query).fetchall()]
         
-    return result
+#     return result
 
 
-def get_local_authority_district_from_region(
-        region_code,
-        fp_database=os.path.join(_default_data_folder,_default_database_name)
-        ):
-    """
-    """
+# def get_local_authority_district_from_region(
+#         region_code,
+#         fp_database=os.path.join(_default_data_folder,_default_database_name)
+#         ):
+#     """
+#     """
     
-    table_name='Local_Authority_District_to_Region_December_2022'
+#     table_name='Local_Authority_District_to_Region_December_2022'
     
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-        SELECT
-            LAD22CD
-        FROM
-            "{table_name}"
-        WHERE
-            RGN22CD = "{region_code}"
-        """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query=f"""
+#         SELECT
+#             LAD22CD
+#         FROM
+#             "{table_name}"
+#         WHERE
+#             RGN22CD = "{region_code}"
+#         """
+#         #print(query)
+#         result=[x[0] for x in c.execute(query).fetchall()]
         
-    return result
+#     return result
     
 
-
-def get_previous_codes(
-        code,
-        fp_database=os.path.join(_default_data_folder,_default_database_name)
-        ):
-    """
-    """
-    
-    table_name='Code_History_Database_May_2023_UK_Changes'
-    
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-            SELECT 
-                GEOGCD_P
-            FROM
-                "{table_name}"
-            WHERE
-                GEOGCD = "{code}"
-            """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
-        
-    return result
+#%% Code_History_Database functions
 
 
-def get_next_codes(
-        code,
-        fp_database=os.path.join(_default_data_folder,_default_database_name)
-        ):
-    """
-    """
-    
-    table_name='Code_History_Database_May_2023_UK_Changes'
-    
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-            SELECT 
-                GEOGCD
-            FROM
-                "{table_name}"
-            WHERE
-                GEOGCD_P = "{code}"
-            """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
-        
-    return result
-
-
-def get_latest_codes(
-        code,
-        fp_database=os.path.join(_default_data_folder,_default_database_name)
-        ):
-    """
-    """
-    
-    result=set()
-    
-    def _get_next_codes(
-            result,
-            codes,
-            fp_database
-            ):
-        
-        for code in codes:
-            
-            x=get_next_codes(code,fp_database)  # a list of codes
-            
-            result.update(x)
-            
-            result = _get_next_codes(result,x,fp_database)
-            
-        return result
-    
-    result =  _get_next_codes(result,[code],fp_database)
-    
-    return list(result)
-
-
-def get_parent_codes(
-        code,
+def get_CHD_change(
+        GEOGCD=None,  # Nine digit code for the Instance (i.e. E01000001).
+        GEOGNM=None,   # Name of the Instance
+        GEOGNMW=None,  # Welsh name of the Instance
+        GEOGCD_P=None,  # The previous nine digit code before the change.
+        GEOGNM_P=None,  # The previous name before the change.
+        GEOGNMW_P=None,  # The previous Welsh name before the change.
+        SI_ID=None,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
+        SI_TITLE=None,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
+        OPER_DATE=None,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
+        ENTITYCD=None,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
+        YEAR=None,  # This field refers to the year of introduction.
+        table_name='Code_History_Database_May_2023_UK_Changes',
         data_folder=_default_data_folder,
-        fp_database=os.path.join(_default_data_folder,_default_database_name)
+        database_name=_default_database_name,
+        verbose=False
         ):
     """
     """
     
-    entity_code=\
-        get_code_entity(
-            code,
-            fp_database
-            )
-        
-    if entity_code in ['E00','W00','E01','W01','E02','W02']:
-    
-        table_name='OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3'
-        
-        metadata_table_group_dict=\
-            _read_metadata_table_group_dict(
-                data_folder
+    where_clause=\
+            csvw_functions_extra.get_where_clause_list(
+                dict(
+                    GEOGCD=GEOGCD,  # Nine digit code for the Instance (i.e. E01000001).
+                    GEOGNM=GEOGNM,   # Name of the Instance
+                    GEOGNMW=GEOGNMW,  # Welsh name of the Instance
+                    GEOGCD_P=GEOGCD_P,  # The previous nine digit code before the change.
+                    GEOGNM_P=GEOGNM_P,  # The previous name before the change.
+                    GEOGNMW_P=GEOGNMW_P,  # The previous Welsh name before the change.
+                    SI_ID=SI_ID,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
+                    SI_TITLE=SI_TITLE,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
+                    OPER_DATE=OPER_DATE,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
+                    ENTITYCD=ENTITYCD,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
+                    YEAR=YEAR,  # This field refers to the year of introduction.
+                    )
                 )
-            
-        metadata_table_dict=[x for x in metadata_table_group_dict['tables'] 
-                             if x['https://purl.org/berg/csvw_functions/vocab/sql_table_name']['@value']==table_name][0]
-            
-        for column_dict in metadata_table_dict['tableSchema']['columns']:
-            
-            #print(column_dict)
-            
-            column_entities=[x['@value'] for x in column_dict.get('http://www.purl.org/berg/ogp_vocab/entities',[])]
-            
-            if entity_code in column_entities:
-                
-                column_name=column_dict['name']
-                parent_name=column_dict['http://www.purl.org/berg/ogp_vocab/parent']['@value']
-                
-                break
-            
-            else:
-                
-                raise Exception(f'entity_code {entity_code}')
         
-    else:
-        
-        raise Exception(f'entity_code {entity_code}')
-        
-        
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-            SELECT 
-                {parent_name}
-            FROM
-                "{table_name}"
-            WHERE
-                {column_name} = "{code}"
-            
-            """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()]
-        
+    query=f"SELECT * FROM {table_name} {where_clause};"
+
+    result=\
+        csvw_functions_extra.run_sql(
+            sql_query=query, 
+            data_folder=data_folder, 
+            database_name=database_name,
+            verbose=verbose
+            )
+    
     return result
+
+
+def get_CHD_change_history(
+        GEOGCD=None,  # Nine digit code for the Instance (i.e. E01000001).
+        GEOGNM=None,   # Name of the Instance
+        GEOGNMW=None,  # Welsh name of the Instance
+        SI_ID=None,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
+        SI_TITLE=None,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
+        OPER_DATE=None,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
+        TERM_DATE=None,  # Date when the Instance was archived (usually the day before the enforcement date of legislation which defines the new instance)
+        PARENTCD=None,  # Nine digit code of the parent instance in the hierarchy (if there is one).
+        ENTITYCD=None,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
+        OWNER=None,  # Geography owner of the entity
+        STATUS=None,  # States whether the Instance is live or terminated
+        AREAEHECT=None,  # 'Extent of the Realm' measurement, in hectares, to 2 decimal places. 'Extent of the Realm' is typically co-incident with Mean Low Water
+        AREACHECT=None,  # Area to Mean High Water, in hectares, to 2 decimal places. Measurements are limited to the Mean High Water mark and include all tracts of inland water
+        AREAIHECT=None,  # Area of inland water, in hectares, to 2 decimal places. This is the surface area of inland water with a surface area measurement of more than 1km2
+        AREALHECT=None,  # Area to Mean High Water excluding area of inland water (land area), in hectares, to 2 decimal places.
+        table_name='Code_History_Database_May_2023_UK_ChangeHistory',
+        data_folder=_default_data_folder,
+        database_name=_default_database_name,
+        verbose=False
+        ):
+    """
+    """
+    
+    where_clause=\
+            csvw_functions_extra.get_where_clause_list(
+                dict(
+                    GEOGCD=GEOGCD,  # Nine digit code for the Instance (i.e. E01000001).
+                    GEOGNM=GEOGNM,   # Name of the Instance
+                    GEOGNMW=GEOGNMW,  # Welsh name of the Instance
+                    SI_ID=SI_ID,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
+                    SI_TITLE=SI_TITLE,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
+                    OPER_DATE=OPER_DATE,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
+                    TERM_DATE=TERM_DATE,  # Date when the Instance was archived (usually the day before the enforcement date of legislation which defines the new instance)
+                    PARENTCD=PARENTCD,  # Nine digit code of the parent instance in the hierarchy (if there is one).
+                    ENTITYCD=ENTITYCD,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
+                    OWNER=OWNER,  # Geography owner of the entity
+                    STATUS=STATUS,  # States whether the Instance is live or terminated
+                    AREAEHECT=AREAEHECT,  # 'Extent of the Realm' measurement, in hectares, to 2 decimal places. 'Extent of the Realm' is typically co-incident with Mean Low Water
+                    AREACHECT=AREACHECT,  # Area to Mean High Water, in hectares, to 2 decimal places. Measurements are limited to the Mean High Water mark and include all tracts of inland water
+                    AREAIHECT=AREAIHECT,  # Area of inland water, in hectares, to 2 decimal places. This is the surface area of inland water with a surface area measurement of more than 1km2
+                    AREALHECT=AREALHECT,  # Area to Mean High Water excluding area of inland water (land area), in hectares, to 2 decimal places.
+                    )
+                )
+        
+    query=f"SELECT * FROM {table_name} {where_clause};"
+
+    result=\
+        csvw_functions_extra.run_sql(
+            sql_query=query, 
+            data_folder=data_folder, 
+            database_name=database_name,
+            verbose=verbose
+            )
+    
+    return result
+
+
+def get_equivalent(
+        ):
+    """
+    """
+    # TO DO
+    
+    
+
+
+
+
+
+
+
+
+# # --- old functions below ---
+
+# def get_previous_codes(
+#         code,
+#         fp_database=os.path.join(_default_data_folder,_default_database_name)
+#         ):
+#     """
+#     """
+    
+#     table_name='Code_History_Database_May_2023_UK_Changes'
+    
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query=f"""
+#             SELECT 
+#                 GEOGCD_P
+#             FROM
+#                 "{table_name}"
+#             WHERE
+#                 GEOGCD = "{code}"
+#             """
+#         #print(query)
+#         result=[x[0] for x in c.execute(query).fetchall()]
+        
+#     return result
+
+
+# def get_next_codes(
+#         code,
+#         fp_database=os.path.join(_default_data_folder,_default_database_name)
+#         ):
+#     """
+#     """
+    
+#     table_name='Code_History_Database_May_2023_UK_Changes'
+    
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query=f"""
+#             SELECT 
+#                 GEOGCD
+#             FROM
+#                 "{table_name}"
+#             WHERE
+#                 GEOGCD_P = "{code}"
+#             """
+#         #print(query)
+#         result=[x[0] for x in c.execute(query).fetchall()]
+        
+#     return result
+
+
+# def get_latest_codes(
+#         code,
+#         fp_database=os.path.join(_default_data_folder,_default_database_name)
+#         ):
+#     """
+#     """
+    
+#     result=set()
+    
+#     def _get_next_codes(
+#             result,
+#             codes,
+#             fp_database
+#             ):
+        
+#         for code in codes:
+            
+#             x=get_next_codes(code,fp_database)  # a list of codes
+            
+#             result.update(x)
+            
+#             result = _get_next_codes(result,x,fp_database)
+            
+#         return result
+    
+#     result =  _get_next_codes(result,[code],fp_database)
+    
+#     return list(result)
+
+
+# def get_parent_codes(
+#         code,
+#         data_folder=_default_data_folder,
+#         fp_database=os.path.join(_default_data_folder,_default_database_name)
+#         ):
+#     """
+#     """
+    
+#     entity_code=\
+#         get_code_entity(
+#             code,
+#             fp_database
+#             )
+        
+#     if entity_code in ['E00','W00','E01','W01','E02','W02']:
+    
+#         table_name='OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3'
+        
+#         metadata_table_group_dict=\
+#             _read_metadata_table_group_dict(
+#                 data_folder
+#                 )
+            
+#         metadata_table_dict=[x for x in metadata_table_group_dict['tables'] 
+#                              if x['https://purl.org/berg/csvw_functions/vocab/sql_table_name']['@value']==table_name][0]
+            
+#         for column_dict in metadata_table_dict['tableSchema']['columns']:
+            
+#             #print(column_dict)
+            
+#             column_entities=[x['@value'] for x in column_dict.get('http://www.purl.org/berg/ogp_vocab/entities',[])]
+            
+#             if entity_code in column_entities:
+                
+#                 column_name=column_dict['name']
+#                 parent_name=column_dict['http://www.purl.org/berg/ogp_vocab/parent']['@value']
+                
+#                 break
+            
+#             else:
+                
+#                 raise Exception(f'entity_code {entity_code}')
+        
+#     else:
+        
+#         raise Exception(f'entity_code {entity_code}')
+        
+        
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query=f"""
+#             SELECT 
+#                 {parent_name}
+#             FROM
+#                 "{table_name}"
+#             WHERE
+#                 {column_name} = "{code}"
+            
+#             """
+#         #print(query)
+#         result=[x[0] for x in c.execute(query).fetchall()]
+        
+#     return result
    
 
-def get_code_entity(
-        code,
-        fp_database=os.path.join(_default_data_folder,_default_database_name)
-        ):
-    """
-    """
+# def get_code_entity(
+#         code,
+#         fp_database=os.path.join(_default_data_folder,_default_database_name)
+#         ):
+#     """
+#     """
     
-    table_name='Code_History_Database_May_2023_UK_Equivalents'
+#     table_name='Code_History_Database_May_2023_UK_Equivalents'
     
-    with sqlite3.connect(fp_database) as conn:
-        c = conn.cursor()
-        query=f"""
-            SELECT 
-                ENTITYCD
-            FROM
-                "{table_name}"
-            WHERE
-                GEOGCD = "{code}"
-            LIMIT 1
-            """
-        #print(query)
-        result=[x[0] for x in c.execute(query).fetchall()][0]
+#     with sqlite3.connect(fp_database) as conn:
+#         c = conn.cursor()
+#         query=f"""
+#             SELECT 
+#                 ENTITYCD
+#             FROM
+#                 "{table_name}"
+#             WHERE
+#                 GEOGCD = "{code}"
+#             LIMIT 1
+#             """
+#         #print(query)
+#         result=[x[0] for x in c.execute(query).fetchall()][0]
         
-    return result
+#     return result
     
 
 
@@ -483,6 +610,44 @@ def get_code_entity(
 #     return result
 
 
+
+#%% NSPL_AUG_2020 functions
+
+def get_NSPL_AUG_2020_UK_rows(
+        pcd=None,
+        
+        ctry=None,
+        data_folder=_default_data_folder,
+        database_name=_default_database_name,
+        verbose=False
+        ):
+    """
+    """
+    
+    table_name='NSPL_AUG_2020_UK'
+    
+    where_clause=\
+            csvw_functions_extra.get_where_clause_list(
+                dict(
+                    pcd=pcd,  # 
+                    
+                    ctry=ctry,  # 
+                    
+                    )
+                )
+        
+    query=f"SELECT * FROM {table_name} {where_clause};"
+
+    result=\
+        csvw_functions_extra.run_sql(
+            sql_query=query, 
+            data_folder=data_folder, 
+            database_name=database_name,
+            verbose=verbose
+            )
+    
+    return result
+    
 
 
 

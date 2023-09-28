@@ -122,7 +122,7 @@
             "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "NSPL21_MAY_2023_UK.csv",
             "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "NSPL21_MAY_2023_UK",
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/data", 
-            "https://purl.org/berg/csvw_functions/vocab/zip_filename": "NSPL21_MAY_2023_UK.zip", 
+            "https://purl.org/berg/csvw_functions/vocab/zip_file_name": "NSPL21_MAY_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Data/NSPL21_MAY_2023_UK.csv",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
@@ -131,25 +131,30 @@
                 "columns": [
                     {
                         "name": "pcd",
+                        "rdfs:comment":"All current (`live`) postcodes within the United Kingdom, the Channel Islands and the Isle of Man, received monthly from Royal Mail. Also, all terminated (`closed`) postcodes that have not been subsequently re-used by Royal Mail within the United Kingdom and by the postal administrations in the Channel Islands and the Isle of Man. 2, 3 or 4 character outward code - left aligned; 3 character inward code - right aligned; 3rd and 4th characters may be blank ()",
                         "datatype": "string",
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     },
                     {
                         "name": "pcd2",
+                        "rdfs:comment": "As above, except: 2, 3 or 4-character outward code - left aligned; 3-character inward code - right aligned; 5th character always blank and 3rd and 4th characters may be blank ()",
                         "datatype": "string",
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     },
                     {
                         "name": "pcds",
+                        "rdfs:comment": "2, 3 or 4-character outward code; Single space (); 3-character inward code",
                         "datatype": "string",
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     },
                     {
                         "name": "dointr",
+                        "rdfs:comment": "The most recent occurrence of the postcode's date of introduction.",
                         "datatype": "string"
                     },
                     {
                         "name": "doterm",
+                        "rdfs:comment": "If present, the most recent occurrence of the postcode's date of termination, otherwise: null = `live` postcode",
                         "datatype": "string"
                     },
                     {
@@ -170,6 +175,7 @@
                     },
                     {
                         "name": "oa21",
+                        "rdfs:comment": "The 2021 Census OAs in England and Wales are based on 2011 Census OAs, and they form the building bricks for defining higher level geographies. 2021 DZs for NI and 2011 OAs for Scotland are included, along with pseudo codes for Channel Islands and Isle of Man. The field will otherwise be blank for postcodes with no grid reference. E00000001 - E00190594 = England; W00000001 - W00010697 = Wales; S00088956 - S00135306 = Scotland; N20000001 - N20003789 = Northern Ireland; L99999999 (pseudo) = Channel Islands; M99999999 (pseudo) = Isle of Man; null = no information available",
                         "datatype": "string",
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     },
@@ -283,12 +289,400 @@
         },
         {
             "@type": "Table",
+            "url": "https://www.arcgis.com/sharing/rest/content/items/b86748732a054592bcf0218e86a43870/data",
+            "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "NSPL_AUG_2020_UK.csv",
+            "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "NSPL_AUG_2020_UK",
+            "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/e0b8e1c707494c01afb73fc08e0c10fe/data", 
+            "https://purl.org/berg/csvw_functions/vocab/zip_file_name": "NSPL_AUG_2020_UK.zip", 
+            "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Data/NSPL_AUG_2020_UK.csv",
+            "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/e0b8e1c707494c01afb73fc08e0c10fe/info/metadata/metadata.xml", 
+            "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
+            "tableSchema": {
+                "primaryKey":["pcd"],
+                "columns": [
+                    {
+                        "name": "pcd",
+                        "titles": "pcd",
+                        "rdfs:label": "pcd",
+                        "rdfs:comment": "Unit postcode – 7 character version. All current (‘live’) postcodes within the United Kingdom, the Channel Islands and the Isle of Man, received monthly from Royal Mail. Also, all terminated (‘closed’) postcodes that have not been subsequently re-used by Royal Mail within the United Kingdom and by the postal administrations in the Channel Islands and the Isle of Man. 2, 3 or 4 character outward code - left aligned; 3 character inward code - right aligned; 3rd and 4th characters may be blank (_)",
+                        "datatype": {
+                            "base": "string"
+                        },
+                        "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
+                    },
+                    {
+                        "name": "pcd2",
+                        "titles": "pcd2",
+                        "rdfs:label": "pcd2",
+                        "rdfs:comment": "Unit postcode – 8 character version.",
+                        "datatype": {
+                            "base": "string"
+                        },
+                        "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
+                    },
+                    {
+                        "name": "pcds",
+                        "titles": "pcds",
+                        "rdfs:label": "pcds",
+                        "rdfs:comment": "Unit postcode - variable length (e-Gif) version. ",
+                        "datatype": {
+                            "base": "string"
+                        },
+                        "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
+                    },
+                    {
+                        "name": "dointr",
+                        "titles": "dointr",
+                        "rdfs:label": "dointr",
+                        "rdfs:comment": "Date of introduction. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "doterm",
+                        "titles": "doterm",
+                        "rdfs:label": "doterm",
+                        "rdfs:comment": "Date of termination. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "usertype",
+                        "titles": "usertype",
+                        "rdfs:label": "usertype",
+                        "rdfs:comment": "Postcode user type. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "oseast1m",
+                        "titles": "oseast1m",
+                        "rdfs:label": "oseast1m",
+                        "rdfs:comment": "National grid reference - Easting. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "osnrth1m",
+                        "titles": "osnrth1m",
+                        "rdfs:label": "osnrth1m",
+                        "rdfs:comment": "National grid reference - Northing. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "osgrdind",
+                        "titles": "osgrdind",
+                        "rdfs:label": "osgrdind",
+                        "rdfs:comment": "Grid reference positional quality indicator. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "oa11",
+                        "titles": "oa11",
+                        "rdfs:label": "oa11",
+                        "rdfs:comment": "2011 Census Output Area (OA)/ Small Area (SA). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "cty",
+                        "titles": "cty",
+                        "rdfs:label": "cty",
+                        "rdfs:comment": "County. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "ced",
+                        "titles": "ced",
+                        "rdfs:label": "ced",
+                        "rdfs:comment": "County Electoral Division. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "laua",
+                        "titles": "laua",
+                        "rdfs:label": "laua",
+                        "rdfs:comment": "Local Authority District (LAD) - unitary authority (UA)/non-metropolitan district (NMD)/ metropolitan district (MD)/ London borough (LB)/ council area (CA)/district council area (DCA). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "ward",
+                        "titles": "ward",
+                        "rdfs:label": "ward",
+                        "rdfs:comment": "(Electoral) ward/division. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "hlthau",
+                        "titles": "hlthau",
+                        "rdfs:label": "hlthau",
+                        "rdfs:comment": "Former Strategic Health Authority (SHA)/ Local Health Board (LHB)/ Health Board (HB)/ Health Authority (HA)/ Health & Social Care Board (HSCB). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "nhser",
+                        "titles": "nhser",
+                        "rdfs:label": "nhser",
+                        "rdfs:comment": "NHS England (Region) (NHS ER). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "ctry",
+                        "titles": "ctry",
+                        "rdfs:label": "ctry",
+                        "rdfs:comment": "Country. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "rgn",
+                        "titles": "rgn",
+                        "rdfs:label": "rgn",
+                        "rdfs:comment": "Region (former GOR)",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "pcon",
+                        "titles": "pcon",
+                        "rdfs:label": "pcon",
+                        "rdfs:comment": "Westminster parliamentary constituency. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "eer",
+                        "titles": "eer",
+                        "rdfs:label": "eer",
+                        "rdfs:comment": "European Electoral Region (EER). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "teclec",
+                        "titles": "teclec",
+                        "rdfs:label": "teclec",
+                        "rdfs:comment": "Local Learning and Skills Council (LLSC)/ Dept. of Children, Education, Lifelong Learning and Skills (DCELLS)/ Enterprise Region (ER). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "ttwa",
+                        "titles": "ttwa",
+                        "rdfs:label": "ttwa",
+                        "rdfs:comment": "Travel to Work Area (TTWA). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "pct",
+                        "titles": "pct",
+                        "rdfs:label": "pct",
+                        "rdfs:comment": "Primary Care Trust (PCT)/ Care Trust/ Care Trust Plus (CT)/ Local Health Board (LHB)/ Community Health Partnership (CHP)/ Local Commissioning Group (LCG)/ Primary Healthcare Directorate (PHD). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "nuts",
+                        "titles": "nuts",
+                        "rdfs:label": "nuts",
+                        "rdfs:comment": "LAU2 area. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "park",
+                        "titles": "park",
+                        "rdfs:label": "park",
+                        "rdfs:comment": "National park. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "lsoa11",
+                        "titles": "lsoa11",
+                        "rdfs:label": "lsoa11",
+                        "rdfs:comment": "2011 Census Lower Layer Super Output Area (LSOA)/ Data Zone (DZ)/ SOA. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "msoa11",
+                        "titles": "msoa11",
+                        "rdfs:label": "msoa11",
+                        "rdfs:comment": "Middle Layer Super Output Area (MSOA)/ Intermediate Zone (IZ). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "wz11",
+                        "titles": "wz11",
+                        "rdfs:label": "wz11",
+                        "rdfs:comment": "2011 Census Workplace Zone. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "ccg",
+                        "titles": "ccg",
+                        "rdfs:label": "ccg",
+                        "rdfs:comment": "Clinical Commissioning Group (CCG)/ Local Health Board (LHB)/ Community Health Partnership (CHP)/ Local Commissioning Group (LCG)/ Primary Healthcare Directorate (PHD). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "bua11",
+                        "titles": "bua11",
+                        "rdfs:label": "bua11",
+                        "rdfs:comment": "Built-up Area (BUA). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "buasd11",
+                        "titles": "buasd11",
+                        "rdfs:label": "buasd11",
+                        "rdfs:comment": "Built-up Area Sub-division (BUASD). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "ru11ind",
+                        "titles": "ru11ind",
+                        "rdfs:label": "ru11ind",
+                        "rdfs:comment": "2011 Census rural-urban classification. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "oac11",
+                        "titles": "oac11",
+                        "rdfs:label": "oac11",
+                        "rdfs:comment": "2011 Census rural-urban classification. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "lat",
+                        "titles": "lat",
+                        "rdfs:label": "lat",
+                        "rdfs:comment": "Decimal degrees latitude. ",
+                        "datatype": {
+                            "base": "decimal"
+                        }
+                    },
+                    {
+                        "name": "long",
+                        "titles": "long",
+                        "rdfs:label": "long",
+                        "rdfs:comment": "Decimal degrees longitude. ",
+                        "datatype": {
+                            "base": "decimal"
+                        }
+                    },
+                    {
+                        "name": "lep1",
+                        "titles": "lep1",
+                        "rdfs:label": "lep1",
+                        "rdfs:comment": "Local Enterprise Partnership (LEP) - first instance. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "lep2",
+                        "titles": "lep2",
+                        "rdfs:label": "lep2",
+                        "rdfs:comment": "Local Enterprise Partnership (LEP) – second instance. ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "pfa",
+                        "titles": "pfa",
+                        "rdfs:label": "pfa",
+                        "rdfs:comment": "Police Force Area (PFA). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "imd",
+                        "titles": "imd",
+                        "rdfs:label": "imd",
+                        "rdfs:comment": "Index of Multiple Deprivation (IMD). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "calncv",
+                        "titles": "calncv",
+                        "rdfs:label": "calncv",
+                        "rdfs:comment": "Cancer Alliance (CAL). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    },
+                    {
+                        "name": "stp",
+                        "titles": "stp",
+                        "rdfs:label": "stp",
+                        "rdfs:comment": "Sustainability and Transformation Partnership (STP). ",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "@type": "Table",
             "url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data",
             "https://purl.org/berg/csvw_functions/vocab/csv_file_name": "Code_History_Database_May_2023_UK_ChangeHistory.csv",
             "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_ChangeHistory",
             "https://purl.org/berg/csvw_functions/vocab/sql_remove_existing_table": true,
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
-            "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
+            "https://purl.org/berg/csvw_functions/vocab/zip_file_name": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "ChangeHistory.csv",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
@@ -444,7 +838,7 @@
             "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_Changes",
             "https://purl.org/berg/csvw_functions/vocab/sql_remove_existing_table": true,
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
-            "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
+            "https://purl.org/berg/csvw_functions/vocab/zip_file_name": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Changes.csv",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
@@ -563,7 +957,7 @@
             "https://purl.org/berg/csvw_functions/vocab/sql_table_name": "Code_History_Database_May_2023_UK_Equivalents",
             "https://purl.org/berg/csvw_functions/vocab/sql_remove_existing_table": true,
             "https://purl.org/berg/csvw_functions/vocab/zip_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/data", 
-            "https://purl.org/berg/csvw_functions/vocab/zip_filename": "Code_History_Database_May_2023_UK.zip", 
+            "https://purl.org/berg/csvw_functions/vocab/zip_file_name": "Code_History_Database_May_2023_UK.zip", 
             "https://purl.org/berg/csvw_functions/vocab/csv_zip_extract_path": "Equivalents.csv",
             "https://purl.org/berg/csvw_functions/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/393a031178684c69973d0e416a862890/info/metadata/metadata.xml", 
             "https://purl.org/berg/csvw_functions/vocab/metadata_file_suffix": "metadata.xml", 
@@ -571,83 +965,158 @@
                 "columns": [
                     {
                         "name": "GEOGCD", 
-                        "datatype": {"base": "string"},
+                        "rdfs:comment": "Nine digit code for the Instance (i.e. E01000001)",
+                        "datatype": {
+                            "base": "string"
+                        }, 
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     }, 
                     {
                         "name": "GEOGNM", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "Name of the Instance.",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "GEOGNMW", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "Welsh name of the Instance",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "GEOGCDO", 
-                        "datatype": {"base": "string"},
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        },
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     }, 
                     {
                         "name": "GEOGNMO", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "GEOGCDD", 
-                        "datatype": {"base": "string"},
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        },
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     }, 
                     {
                         "name": "GEOGNMD", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "GEOGCDH", 
-                        "datatype": {"base": "string"},
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        },
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     }, 
                     {
                         "name": "GEOGNMH", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "GEOGCDS", 
-                        "datatype": {"base": "string"},
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        },
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     }, 
                     {
                         "name": "GEOGNMS", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "GEOGCDI", 
-                        "datatype": {"base": "string"},
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        },
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     }, 
                     {
                         "name": "GEOGNMI", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "GEOGCDWG", 
-                        "datatype": {"base": "string"},
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        },
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     }, 
                     {
                         "name": "GEOGNMWG", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "GEOGNMWWG", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "OPER_DATE", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "TERM_DATE", 
-                        "datatype": {"base": "string"}}, 
+                        "rdfs:comment": "Date when the Instance was archived (usually the day before the enforcement date of legislation which defines the new instance)",
+                        "datatype": {
+                            "base": "string"
+                        }
+                    }, 
                     {
                         "name": "ENTITYCD", 
-                        "datatype": {"base": "string"},
+                        "rdfs:comment": "Three digit code prefix for the Entity (i.e. E01)",
+                        "datatype": {
+                            "base": "string"
+                        },
                         "https://purl.org/berg/csvw_functions/vocab/sqlsetindex": true
                     }, 
                     {
                         "name": "YEAR", 
-                        "datatype": {"base": "integer"}}, 
+                        "rdfs:comment": "This field refers to the year of introduction. ",
+                        "datatype": {
+                            "base": "integer"
+                        }
+                    }, 
                     {
                         "name": "STATUS", 
-                        "datatype": {"base": "string"}
+                        "rdfs:comment": "States whether the Instance is live or terminated",
+                        "datatype": {
+                            "base": "string"
+                        }
                     }
                 ]
             }

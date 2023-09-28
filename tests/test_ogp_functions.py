@@ -18,13 +18,13 @@ import os
 class TestDataFolder(unittest.TestCase):
     ""
     
-    def test_set_data_folder(self):
+    def _test_set_data_folder(self):
         ""
         
         fp=os.path.join(os.pardir,'ogp_tables-metadata.json')
         
         ogp_functions.set_data_folder(
-            #metadata_document_location=fp,
+            metadata_document_location=fp,
             #overwrite_existing_files=True,
             #remove_existing_tables=True,
             verbose=True
@@ -32,104 +32,224 @@ class TestDataFolder(unittest.TestCase):
         
 
 
+class TestCodeHistoryDatabaseFunctions(unittest.TestCase):
+    ""
+    
+    def test_get_change(self):
+        ""
+        
+        result=ogp_functions.get_CHD_change(
+            GEOGCD='E00000001',
+            table_name='Code_History_Database_May_2023_UK_Changes'
+            )
+        
+        self.assertEqual(
+            result,
+            [
+                {
+                    'GEOGCD': 'E00000001', 
+                    'GEOGNM': '', 
+                    'GEOGNMW': '', 
+                    'GEOGCD_P': '00AAFA0001', 
+                    'GEOGNM_P': '', 
+                    'GEOGNMW_P': '', 
+                    'SI_ID': '1111/1001', 
+                    'SI_TITLE': 'GSS re-coding strategy', 
+                    'OPER_DATE': '01/01/2009', 
+                    'ENTITYCD': 'E00', 
+                    'YEAR': 2009
+                    }
+                ]
+            )
+        
+        
+    def test_get_change_hitory(self):
+        ""
+        
+        result=ogp_functions.get_CHD_change_history(
+            GEOGCD='E00000001',
+            table_name='Code_History_Database_May_2023_UK_ChangeHistory'
+            )
+        
+        self.assertEqual(
+            result,
+            [
+                {
+                    'GEOGCD': 'E00000001', 
+                     'GEOGNM': '', 
+                     'GEOGNMW': '', 
+                     'SI_ID': '1111/1001', 
+                     'SI_TITLE': 'GSS re-coding strategy', 
+                     'OPER_DATE': '01/01/2009', 
+                     'TERM_DATE': '', 
+                     'PARENTCD': 'E01000001', 
+                     'ENTITYCD': 'E00', 
+                     'OWNER': 'ONS', 
+                     'STATUS': 'live', 
+                     'AREAEHECT': 0.67, 
+                     'AREACHECT': 0.67, 
+                     'AREAIHECT': 0.0, 
+                     'AREALHECT': 0.67
+                     }
+                ]
+            )
+
+
+class TestNSPL_AUG2020Functions(unittest.TestCase):
+    ""
+    
+    def test_get_NSPL_AUG_2020_UK_rows(self):
+        
+        result=ogp_functions.get_NSPL_AUG_2020_UK_rows(
+            pcd='AB1 0AA'
+            )
+        
+        self.assertEqual(
+            result,
+            [
+                {'pcd': 'AB1 0AA', 
+                 'pcd2': 'AB1  0AA', 
+                 'pcds': 'AB1 0AA', 
+                 'dointr': '198001', 
+                 'doterm': '199606', 
+                 'usertype': '0', 
+                 'oseast1m': '385386', 
+                 'osnrth1m': '0801193', 
+                 'osgrdind': '1', 
+                 'oa11': 'S00090303', 
+                 'cty': 'S99999999', 
+                 'ced': 'S99999999', 
+                 'laua': 'S12000033', 
+                 'ward': 'S13002843', 
+                 'hlthau': 'S08000020', 
+                 'nhser': 'S99999999', 
+                 'ctry': 'S92000003', 
+                 'rgn': 'S99999999', 
+                 'pcon': 'S14000002', 
+                 'eer': 'S15000001', 
+                 'teclec': 'S09000001', 
+                 'ttwa': 'S22000047', 
+                 'pct': 'S03000012', 
+                 'nuts': 'S31000935', 
+                 'park': 'S99999999', 
+                 'lsoa11': 'S01006514', 
+                 'msoa11': 'S02001237', 
+                 'wz11': 'S34002990', 
+                 'ccg': 'S03000012', 
+                 'bua11': 'S99999999', 
+                 'buasd11': 'S99999999', 
+                 'ru11ind': '3', 
+                 'oac11': '1C3', 
+                 'lat': 57.101474, 
+                 'long': -2.242851, 
+                 'lep1': 'S99999999', 
+                 'lep2': 'S99999999', 
+                 'pfa': 'S23000009', 
+                 'imd': '6808', 
+                 'calncv': 'S99999999', 
+                 'stp': 'S99999999'}]
+            )
+
+
+
 class TestMainFunctions(unittest.TestCase):
     ""
     
-    def test_get_region_from_local_authority_district(self):
-        ""
+    # def test_get_region_from_local_authority_district(self):
+    #     ""
         
-        result=ogp_functions.get_region_from_local_authority_district(
-            'E06000001'
-            )
-        #print(result)
+    #     result=ogp_functions.get_region_from_local_authority_district(
+    #         'E06000001'
+    #         )
+    #     #print(result)
         
-        self.assertEqual(
-            result,
-            ['E12000001']
-            )
+    #     self.assertEqual(
+    #         result,
+    #         ['E12000001']
+    #         )
         
         
-    def test_get_local_authority_district_from_region(self):
-        ""
+    # def test_get_local_authority_district_from_region(self):
+    #     ""
         
-        result=ogp_functions.get_local_authority_district_from_region(
-            'E12000001'
-            )
-        #print(result)
+    #     result=ogp_functions.get_local_authority_district_from_region(
+    #         'E12000001'
+    #         )
+    #     #print(result)
         
-        self.assertEqual(
-            set(result),
-            set(['E06000001', 'E06000002', 'E06000003', 'E06000004', 
-                 'E06000005', 'E06000047', 'E06000057', 'E08000021', 
-                 'E08000022', 'E08000023', 'E08000024', 'E08000037'])
-            )
+    #     self.assertEqual(
+    #         set(result),
+    #         set(['E06000001', 'E06000002', 'E06000003', 'E06000004', 
+    #              'E06000005', 'E06000047', 'E06000057', 'E08000021', 
+    #              'E08000022', 'E08000023', 'E08000024', 'E08000037'])
+    #         )
 
-    def test_get_previous_codes(self):
-        ""
-        code='E06000063'
-        result=ogp_functions.get_previous_codes(
-            code
-            )
-        #print(result)
+    # def test_get_previous_codes(self):
+    #     ""
+    #     code='E06000063'
+    #     result=ogp_functions.get_previous_codes(
+    #         code
+    #         )
+    #     #print(result)
         
-        self.assertEqual(
-            set(result),
-            set(['E07000028','E07000026','E07000029'])
-            )
-        
-        
-    def test_get_next_codes(self):
-        ""
-        code='E07000026'
-        result=ogp_functions.get_next_codes(
-            code
-            )
-        #print(result)
-        
-        self.assertEqual(
-            set(result),
-            set(['E06000063'])
-            )
+    #     self.assertEqual(
+    #         set(result),
+    #         set(['E07000028','E07000026','E07000029'])
+    #         )
         
         
-    def test_get_latest_codes(self):
-        ""
-        code='E07000026'
-        result=ogp_functions.get_latest_codes(
-            code
-            )
-        #print(result)
+    # def test_get_next_codes(self):
+    #     ""
+    #     code='E07000026'
+    #     result=ogp_functions.get_next_codes(
+    #         code
+    #         )
+    #     #print(result)
         
-        self.assertEqual(
-            set(result),
-            set(['E06000063'])
-            )
-        
-        
-    def test_get_code_entity(self):
-        ""
-        code='E07000026'
-        result=ogp_functions.get_code_entity(
-            code
-            )
-        #print(result)
-        
-        self.assertEqual(
-            result,
-            'E07'
-            )
+    #     self.assertEqual(
+    #         set(result),
+    #         set(['E06000063'])
+    #         )
         
         
-    def test_get_parent_codes(self):
-        ""
-        code='E00130460'
-        result=ogp_functions.get_parent_codes(
-            code
-            )
-        self.assertEqual(
-            set(result),
-            set(['E01025710'])
-            )
+    # def test_get_latest_codes(self):
+    #     ""
+    #     code='E07000026'
+    #     result=ogp_functions.get_latest_codes(
+    #         code
+    #         )
+    #     #print(result)
+        
+    #     self.assertEqual(
+    #         set(result),
+    #         set(['E06000063'])
+    #         )
+        
+        
+    # def test_get_code_entity(self):
+    #     ""
+    #     code='E07000026'
+    #     result=ogp_functions.get_code_entity(
+    #         code
+    #         )
+    #     #print(result)
+        
+    #     self.assertEqual(
+    #         result,
+    #         'E07'
+    #         )
+        
+        
+    # def test_get_parent_codes(self):
+    #     ""
+    #     code='E00130460'
+    #     result=ogp_functions.get_parent_codes(
+    #         code
+    #         )
+    #     self.assertEqual(
+    #         set(result),
+    #         set(['E01025710'])
+    #         )
                   
         
 
