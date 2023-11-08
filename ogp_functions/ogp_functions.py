@@ -31,12 +31,24 @@ urllib.request.urlcleanup()
 
 #%% data folder
 
+def get_metadata_sql_table_names(
+        data_folder=_default_data_folder
+        ):
+    """
+    """
+    return csvw_functions_extra.get_metadata_sql_table_names(
+        data_folder=data_folder,
+        metadata_filename='ogp_tables-metadata.json'
+        )
+
+
 def set_data_folder(
         metadata_document_location=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_tables-metadata.json', 
         data_folder=_default_data_folder,
         overwrite_existing_files=False,
         database_name=_default_database_name,
         remove_existing_tables=False,
+        csv_file_name=None,
         verbose=False
         ):
     ""
@@ -46,6 +58,7 @@ def set_data_folder(
         csvw_functions_extra.download_table_group(
             metadata_document_location,
             data_folder=data_folder,
+            csv_file_name=csv_file_name,
             overwrite_existing_files=overwrite_existing_files,
             verbose=verbose
             )
@@ -57,6 +70,7 @@ def set_data_folder(
         metadata_document_location=fp_metadata,
         data_folder=data_folder,
         database_name=database_name,
+        csv_file_name=csv_file_name,
         remove_existing_tables=remove_existing_tables,
         verbose=verbose
         )
