@@ -8,15 +8,109 @@ Created on Wed Aug  9 13:08:36 2023
 import unittest
 
 from ogp_functions import ogp_functions
+import csvw_functions_extra
 
 import datetime
 import json
 import os
 
-
+metadata_filename = 'ogp_tables-metadata.json'
 
 class TestDataFolder(unittest.TestCase):
     ""
+    
+    def test_get_available_csv_file_names(self):
+        ""
+        result = \
+            ogp_functions.get_available_csv_file_names(
+                )
+        self.assertEqual(
+            result,
+            [
+                'Local_Authority_District_to_Region_December_2022.csv', 
+                'OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3.csv', 
+                'NSPL21_MAY_2023_UK.csv', 
+                'NSPL_AUG_2020_UK.csv', 
+                'Code_History_Database_May_2023_UK_ChangeHistory.csv', 
+                'Code_History_Database_May_2023_UK_Changes.csv', 
+                'Code_History_Database_May_2023_UK_Equivalents.csv'
+                ]
+            )
+        
+        
+    def _test_download_and_import_data(self):
+        ""
+        ogp_functions.download_and_import_data(
+            verbose=True,
+            )
+        
+        
+    def _test__download_table_group_LOCAL_METADATA(self):
+        ""
+        fp_table_group_metadata = \
+            os.path.join(os.pardir,metadata_filename)
+        
+        csvw_functions_extra.download_table_group(
+            metadata_document_location = fp_table_group_metadata,
+            data_folder = '_data',
+            overwrite_existing_files = False,
+            verbose = True
+            )
+        
+    def test_get_ogp_field_names_in_database(self):
+        ""
+        result = \
+            ogp_functions.get_ogp_field_names_in_database(
+                )
+        #print(result)
+        self.assertEqual(
+            result,
+            {
+                'Local_Authority_District_to_Region_December_2022': [
+                    'LAD22CD', 'LAD22NM', 'RGN22CD', 'RGN22NM', 'ObjectId'
+                    ], 
+                'OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3': [
+                    'OA21CD', 'LSOA21CD', 'LSOA21NM', 'LSOA21NMW', 'MSOA21CD', 'MSOA21NM', 'MSOA21NMW', 'LAD22CD', 'LAD22NM', 'LAD22NMW', 'ObjectId'
+                    ], 
+                'NSPL21_MAY_2023_UK': [
+                    'pcd', 'pcd2', 'pcds', 'dointr', 'doterm', 'usertype', 'oseast1m', 'osnrth1m', 'osgrdind', 'oa21', 'cty', 'ced', 'laua', 'ward', 'nhser', 'ctry', 'rgn', 'pcon', 'ttwa', 'itl', 'park', 'lsoa21', 'msoa21', 'wz11', 'sicbl', 'bua22', 'ru11ind', 'oac11', 'lat', 'long', 'lep1', 'lep2', 'pfa', 'imd', 'icb'
+                    ], 
+                'NSPL_AUG_2020_UK': [
+                    'pcd', 'pcd2', 'pcds', 'dointr', 'doterm', 'usertype', 'oseast1m', 'osnrth1m', 'osgrdind', 'oa11', 'cty', 'ced', 'laua', 'ward', 'hlthau', 'nhser', 'ctry', 'rgn', 'pcon', 'eer', 'teclec', 'ttwa', 'pct', 'nuts', 'park', 'lsoa11', 'msoa11', 'wz11', 'ccg', 'bua11', 'buasd11', 'ru11ind', 'oac11', 'lat', 'long', 'lep1', 'lep2', 'pfa', 'imd', 'calncv', 'stp'
+                    ], 
+                'Code_History_Database_May_2023_UK_ChangeHistory': [
+                    'GEOGCD', 'GEOGNM', 'GEOGNMW', 'SI_ID', 'SI_TITLE', 'OPER_DATE', 'TERM_DATE', 'PARENTCD', 'ENTITYCD', 'OWNER', 'STATUS', 'AREAEHECT', 'AREACHECT', 'AREAIHECT', 'AREALHECT'
+                    ], 
+                'Code_History_Database_May_2023_UK_Changes': [
+                    'GEOGCD', 'GEOGNM', 'GEOGNMW', 'GEOGCD_P', 'GEOGNM_P', 'GEOGNMW_P', 'SI_ID', 'SI_TITLE', 'OPER_DATE', 'ENTITYCD', 'YEAR'
+                    ], 
+                'Code_History_Database_May_2023_UK_Equivalents': [
+                    'GEOGCD', 'GEOGNM', 'GEOGNMW', 'GEOGCDO', 'GEOGNMO', 'GEOGCDD', 'GEOGNMD', 'GEOGCDH', 'GEOGNMH', 'GEOGCDS', 'GEOGNMS', 'GEOGCDI', 'GEOGNMI', 'GEOGCDWG', 'GEOGNMWG', 'GEOGNMWWG', 'OPER_DATE', 'TERM_DATE', 'ENTITYCD', 'YEAR', 'STATUS'
+                    ]
+                }
+            )
+        
+    
+    def test_get_ogp_table_names_in_database(self):
+        ""
+        result = \
+            ogp_functions.get_ogp_table_names_in_database(
+                )
+        #print(result)
+        self.assertEqual(
+            result,
+            [
+                'Local_Authority_District_to_Region_December_2022', 
+                'OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3', 
+                'NSPL21_MAY_2023_UK', 
+                'NSPL_AUG_2020_UK', 
+                'Code_History_Database_May_2023_UK_ChangeHistory', 
+                'Code_History_Database_May_2023_UK_Changes', 
+                'Code_History_Database_May_2023_UK_Equivalents'
+                ]
+            )
+    
+    
     
     def _test_set_data_folder(self):
         ""
@@ -35,14 +129,15 @@ class TestDataFolder(unittest.TestCase):
 class TestCodeHistoryDatabaseFunctions(unittest.TestCase):
     ""
     
-    def test_get_change(self):
+    def test_get_CHD_change_rows(self):
         ""
         
-        result=ogp_functions.get_CHD_change(
-            GEOGCD='E00000001',
-            table_name='Code_History_Database_May_2023_UK_Changes'
+        result=ogp_functions.get_CHD_change_rows(
+            GEOGCD = 'E00000001',
+            table_name = 'Code_History_Database_May_2023_UK_Changes',
+            verbose = False
             )
-        
+        #print(result)
         self.assertEqual(
             result,
             [
@@ -63,7 +158,7 @@ class TestCodeHistoryDatabaseFunctions(unittest.TestCase):
             )
         
         
-    def test_get_change_hitory(self):
+    def _test_get_change_hitory(self):
         ""
         
         result=ogp_functions.get_CHD_change_history(
@@ -98,7 +193,7 @@ class TestCodeHistoryDatabaseFunctions(unittest.TestCase):
 class TestNSPL_AUG2020Functions(unittest.TestCase):
     ""
     
-    def test_get_NSPL_AUG_2020_UK_rows(self):
+    def _test_get_NSPL_AUG_2020_UK_rows(self):
         
         result=ogp_functions.get_NSPL_AUG_2020_UK_rows(
             pcd='AB1 0AA'

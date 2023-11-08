@@ -19,75 +19,183 @@ import pandas as pd
 import csv
 from lxml import etree
 from bs4 import BeautifulSoup
-from csvw_functions import csvw_functions_extra
+import csvw_functions_extra
 
-
-_default_data_folder='_data'  # the default
-_default_database_name='ogp_data.sqlite'
 
 urllib.request.urlcleanup()
 
-
+metadata_document_location = r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_tables-metadata.json'
+metadata_filename = 'ogp_tables-metadata.json'
 
 #%% data folder
 
-def get_metadata_sql_table_names(
-        data_folder=_default_data_folder
+def get_available_csv_file_names(
         ):
+    """Returns the CSV file names of all tables in the (remote) CSVW metadata file.
+    
     """
-    """
-    return csvw_functions_extra.get_metadata_sql_table_names(
-        data_folder=data_folder,
-        metadata_filename='ogp_tables-metadata.json'
-        )
+    result = \
+        csvw_functions_extra.get_available_csv_file_names(
+            metadata_document_location = metadata_document_location
+            )
+    
+    return result
 
 
-def set_data_folder(
-        metadata_document_location=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_tables-metadata.json', 
-        data_folder=_default_data_folder,
-        overwrite_existing_files=False,
-        database_name=_default_database_name,
-        remove_existing_tables=False,
-        csv_file_name=None,
+def download_and_import_data(
+        csv_file_names = None,
+        data_folder = '_data',
+        database_name = 'ogp_data.sqlite',
         verbose=False
         ):
-    ""
-    
-    # download all tables to data_folder
-    fp_metadata=\
-        csvw_functions_extra.download_table_group(
-            metadata_document_location,
-            data_folder=data_folder,
-            csv_file_name=csv_file_name,
-            overwrite_existing_files=overwrite_existing_files,
-            verbose=verbose
+    """
+    """
+    _download_table_group(
+            data_folder = data_folder,
+            csv_file_names = csv_file_names,  
+            verbose = verbose
             )
-
-    #return
-        
-    # import all tables to sqlite
-    csvw_functions_extra.import_table_group_to_sqlite(
-        metadata_document_location=fp_metadata,
-        data_folder=data_folder,
-        database_name=database_name,
-        csv_file_name=csv_file_name,
-        remove_existing_tables=remove_existing_tables,
-        verbose=verbose
-        )
-
-
-def _read_metadata_table_group_dict(
-        data_folder,
+    
+    _import_table_group_to_sqlite(
+            data_folder = data_folder,
+            database_name = database_name,
+            csv_file_names = csv_file_names, 
+            verbose = verbose
+            )
+    
+    
+def _download_table_group(
+        data_folder = '_data',
+        csv_file_names = None,  
+        verbose = False
         ):
-    ""
-    fp=os.path.join(
-        data_folder,
-        'ogp_tables-metadata.json'
+    """
+    """
+    csvw_functions_extra.download_table_group(
+        metadata_document_location = metadata_document_location,
+        csv_file_names = csv_file_names,
+        data_folder = data_folder,
+        overwrite_existing_files = True,
+        verbose = verbose
         )
-    with open(fp) as f:
-        metadata_table_group_dic=json.load(f)
         
-    return metadata_table_group_dic
+    
+def _import_table_group_to_sqlite(
+        data_folder = '_data',
+        database_name = 'ogp_data.sqlite',
+        csv_file_names = None, 
+        verbose = False
+        ):
+    """
+    """
+    csvw_functions_extra.import_table_group_to_sqlite(
+        metadata_filename = metadata_filename,
+        csv_file_names = csv_file_names,
+        data_folder = data_folder,
+        database_name = database_name,
+        overwrite_existing_tables = True,
+        verbose = verbose
+        )
+
+
+def get_ogp_field_names_in_database(
+        data_folder = '_data',
+        database_name = 'ogp_data.sqlite'
+        ):
+    """
+    """
+    table_names = \
+        get_ogp_table_names_in_database(
+            data_folder = data_folder,
+            database_name = database_name
+            )
+        
+    result = {}
+    for table_name in table_names:
+        result[table_name] =\
+            csvw_functions_extra.get_field_names(
+                    table_name = table_name,
+                    data_folder = data_folder,
+                    database_name = database_name,
+                    )
+            
+    return result
+    
+    
+def get_ogp_table_names_in_database(
+        data_folder = '_data',
+        database_name = 'ogp_data.sqlite'
+        ):
+    """
+    """
+    
+    result = \
+        csvw_functions_extra.get_sql_table_names_in_database(
+            data_folder = data_folder,
+            database_name = database_name,
+            metadata_filename = metadata_filename
+            )
+    
+    return result
+
+
+# def get_metadata_sql_table_names(
+#         data_folder=_default_data_folder
+#         ):
+#     """
+#     """
+#     return csvw_functions_extra.get_metadata_sql_table_names(
+#         data_folder=data_folder,
+#         metadata_filename='ogp_tables-metadata.json'
+#         )
+
+
+# def set_data_folder(
+#         metadata_document_location=r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_tables-metadata.json', 
+#         data_folder=_default_data_folder,
+#         overwrite_existing_files=False,
+#         database_name=_default_database_name,
+#         remove_existing_tables=False,
+#         csv_file_name=None,
+#         verbose=False
+#         ):
+#     ""
+    
+#     # download all tables to data_folder
+#     fp_metadata=\
+#         csvw_functions_extra.download_table_group(
+#             metadata_document_location,
+#             data_folder=data_folder,
+#             csv_file_name=csv_file_name,
+#             overwrite_existing_files=overwrite_existing_files,
+#             verbose=verbose
+#             )
+
+#     #return
+        
+#     # import all tables to sqlite
+#     csvw_functions_extra.import_table_group_to_sqlite(
+#         metadata_document_location=fp_metadata,
+#         data_folder=data_folder,
+#         database_name=database_name,
+#         csv_file_name=csv_file_name,
+#         remove_existing_tables=remove_existing_tables,
+#         verbose=verbose
+#         )
+
+
+# def _read_metadata_table_group_dict(
+#         data_folder,
+#         ):
+#     ""
+#     fp=os.path.join(
+#         data_folder,
+#         'ogp_tables-metadata.json'
+#         )
+#     with open(fp) as f:
+#         metadata_table_group_dic=json.load(f)
+        
+#     return metadata_table_group_dic
         
 
     
@@ -146,51 +254,57 @@ def _read_metadata_table_group_dict(
 #%% Code_History_Database functions
 
 
-def get_CHD_change(
-        GEOGCD=None,  # Nine digit code for the Instance (i.e. E01000001).
-        GEOGNM=None,   # Name of the Instance
-        GEOGNMW=None,  # Welsh name of the Instance
-        GEOGCD_P=None,  # The previous nine digit code before the change.
-        GEOGNM_P=None,  # The previous name before the change.
-        GEOGNMW_P=None,  # The previous Welsh name before the change.
-        SI_ID=None,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
-        SI_TITLE=None,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
-        OPER_DATE=None,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
-        ENTITYCD=None,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
-        YEAR=None,  # This field refers to the year of introduction.
-        table_name='Code_History_Database_May_2023_UK_Changes',
-        data_folder=_default_data_folder,
-        database_name=_default_database_name,
-        verbose=False
+def get_CHD_change_rows(
+        GEOGCD = None,  # Nine digit code for the Instance (i.e. E01000001).
+        GEOGNM = None,   # Name of the Instance
+        GEOGNMW = None,  # Welsh name of the Instance
+        GEOGCD_P = None,  # The previous nine digit code before the change.
+        GEOGNM_P = None,  # The previous name before the change.
+        GEOGNMW_P = None,  # The previous Welsh name before the change.
+        SI_ID = None,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
+        SI_TITLE = None,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
+        OPER_DATE = None,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
+        ENTITYCD = None,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
+        YEAR = None,  # This field refers to the year of introduction.
+        table_name = 'Code_History_Database_May_2023_UK_Changes',
+        fields = None,
+        limit = None,
+        pandas = False,
+        data_folder = '_data',
+        database_name = 'ogp_data.sqlite',
+        verbose = False
         ):
     """
     """
     
-    where_clause=\
-            csvw_functions_extra.get_where_clause_list(
-                dict(
-                    GEOGCD=GEOGCD,  # Nine digit code for the Instance (i.e. E01000001).
-                    GEOGNM=GEOGNM,   # Name of the Instance
-                    GEOGNMW=GEOGNMW,  # Welsh name of the Instance
-                    GEOGCD_P=GEOGCD_P,  # The previous nine digit code before the change.
-                    GEOGNM_P=GEOGNM_P,  # The previous name before the change.
-                    GEOGNMW_P=GEOGNMW_P,  # The previous Welsh name before the change.
-                    SI_ID=SI_ID,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
-                    SI_TITLE=SI_TITLE,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
-                    OPER_DATE=OPER_DATE,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
-                    ENTITYCD=ENTITYCD,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
-                    YEAR=YEAR,  # This field refers to the year of introduction.
-                    )
-                )
-        
-    query=f"SELECT * FROM {table_name} {where_clause};"
-
-    result=\
-        csvw_functions_extra.run_sql(
-            sql_query=query, 
-            data_folder=data_folder, 
-            database_name=database_name,
-            verbose=verbose
+    filter_by = \
+        dict(
+            GEOGCD = GEOGCD,  # Nine digit code for the Instance (i.e. E01000001).
+            GEOGNM = GEOGNM,   # Name of the Instance
+            GEOGNMW = GEOGNMW,  # Welsh name of the Instance
+            GEOGCD_P = GEOGCD_P,  # The previous nine digit code before the change.
+            GEOGNM_P = GEOGNM_P,  # The previous name before the change.
+            GEOGNMW_P = GEOGNMW_P,  # The previous Welsh name before the change.
+            SI_ID = SI_ID,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
+            SI_TITLE = SI_TITLE,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
+            OPER_DATE = OPER_DATE,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
+            ENTITYCD = ENTITYCD,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
+            YEAR = YEAR,  # This field refers to the year of introduction.
+            )
+    filter_by = {k:v for k,v in filter_by.items() if not v is None}    
+    
+                
+    result = \
+        csvw_functions_extra.get_rows(
+            table_name = table_name,
+            data_folder = data_folder,
+            database_name = database_name,
+            filter_by = filter_by,
+            fields = fields,
+            limit = limit,
+            pandas = pandas,
+            metadata_filename = metadata_filename,
+            verbose = verbose
             )
     
     return result
@@ -213,15 +327,18 @@ def get_CHD_change_history(
         AREAIHECT=None,  # Area of inland water, in hectares, to 2 decimal places. This is the surface area of inland water with a surface area measurement of more than 1km2
         AREALHECT=None,  # Area to Mean High Water excluding area of inland water (land area), in hectares, to 2 decimal places.
         table_name='Code_History_Database_May_2023_UK_ChangeHistory',
-        data_folder=_default_data_folder,
-        database_name=_default_database_name,
+        fields = None,
+        limit = None,
+        pandas = False,
+        data_folder = '_data',
+        database_name = 'ogp_data.sqlite',
         verbose=False
         ):
     """
     """
     
     where_clause=\
-            csvw_functions_extra.get_where_clause_list(
+            csvw_functions_extra.get_where_string(
                 dict(
                     GEOGCD=GEOGCD,  # Nine digit code for the Instance (i.e. E01000001).
                     GEOGNM=GEOGNM,   # Name of the Instance
@@ -631,8 +748,8 @@ def get_NSPL_AUG_2020_UK_rows(
         pcd=None,
         
         ctry=None,
-        data_folder=_default_data_folder,
-        database_name=_default_database_name,
+        data_folder = '_data',
+        database_name = 'ogp_data.sqlite',
         verbose=False
         ):
     """
@@ -641,7 +758,7 @@ def get_NSPL_AUG_2020_UK_rows(
     table_name='NSPL_AUG_2020_UK'
     
     where_clause=\
-            csvw_functions_extra.get_where_clause_list(
+            csvw_functions_extra.get_where_string(
                 dict(
                     pcd=pcd,  # 
                     
