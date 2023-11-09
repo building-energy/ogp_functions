@@ -139,6 +139,33 @@ def get_ogp_table_names_in_database(
     return result
 
 
+#%% boundaries data
+
+
+    
+def get_boundaries_names(
+        ):
+    """
+    """
+    
+
+def download_boundaries_data(
+        ):
+    """
+    """
+    
+def _get_boundaries_metadata_file(
+        boundaries_metadata_file_location
+        ):
+        
+
+
+
+
+
+
+
+
 # def get_metadata_sql_table_names(
 #         data_folder=_default_data_folder
 #         ):
