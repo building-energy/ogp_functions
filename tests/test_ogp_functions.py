@@ -134,7 +134,7 @@ class TestBoundariesData(unittest.TestCase):
         result = \
             ogp_functions.get_available_boundaries_names(
                 )
-        print(result)
+        #print(result)
 
 
     def test_download_boundaries_data(self):
@@ -142,7 +142,21 @@ class TestBoundariesData(unittest.TestCase):
         result = \
             ogp_functions.download_boundaries_data(
                 )
+        #print(result)
+        
+        
+    def test_get_downloaded_boundaries_names(self):
+        ""
+        result = \
+            ogp_functions.get_downloaded_boundaries_names(
+                )
         print(result)
+        
+    def test_plot_boundaries(self):
+        ""
+        ogp_functions.plot_boundaries(
+            name = 'Local_Authority_Districts_May_2023_UK_BUC_V2'
+            )
 
 
 class TestCodeHistoryDatabaseFunctions(unittest.TestCase):

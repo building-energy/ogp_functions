@@ -20,6 +20,8 @@ import csv
 from lxml import etree
 from bs4 import BeautifulSoup
 import csvw_functions_extra
+import matplotlib.pyplot as plt
+import matplotlib
 
 
 urllib.request.urlcleanup()
@@ -197,16 +199,24 @@ def download_boundaries_data(
         if name in names:
             
             # geojson
+            request = \
+                urllib.request.urlopen(
+                    x['geojson_url']
+                    )
+            geojson = json.loads(request.read().decode())
+            
             fp_geojson = \
                 os.path.join(
                     data_folder,
                     f'{name}.json'
                     )
-            
-            urllib.request.urlretrieve(
-                url = x['geojson_url'], 
-                filename = fp_geojson
-                )
+                
+            with open(fp_geojson, 'w') as f:
+                json.dump(
+                    geojson,
+                    f,
+                    indent = 4
+                    )
             
             # geojson - metadata
             fp_geojson_metadata = \
@@ -220,12 +230,144 @@ def download_boundaries_data(
                 filename = fp_geojson_metadata
                 )
             
-    
     return boundaries_metadata_list
 
 
+def get_downloaded_boundaries_names(
+        data_folder = '_data'
+        ):
+    """
+    """
+    boundaries_metadata_list = \
+        get_boundaries_metadata_list(
+            data_folder = data_folder
+            )
+        
+    result = []
+        
+    for x in boundaries_metadata_list:
+        
+        name = x['name']
+        
+        fp_geojson = \
+            os.path.join(
+                data_folder,
+                f'{name}.json'
+                )
+            
+        if os.path.exists(fp_geojson):
+            
+            result.append(name)
+            
+    return result
+    
+    
+def get_boundaries_metadata_list(
+        data_folder = '_data'
+        ):
+    """
+    """
+    fp_boundaries_metadata = \
+        os.path.join(
+            data_folder,
+            boundaries_metadata_filename
+            )
+        
+    # get boundaries_metadata_list
+    with open(fp_boundaries_metadata) as f:
+        boundaries_metadata_list = json.load(f)
+        
+    return boundaries_metadata_list
 
 
+def get_boundaries_geojson(
+        name,
+        data_folder = '_data'
+        ):
+    """
+    """
+    fp_geojson = \
+        os.path.join(
+            data_folder,
+            f'{name}.json'
+            )
+    
+    with open(fp_geojson) as f:
+        geojson = json.load(f)
+        
+    return geojson
+
+
+def plot_boundaries(
+        name,
+        cmap = None,
+        color_value_map = None,
+        code_name = None,
+        data_folder = '_data',
+        matplotlib_ax = None
+        ):
+    """
+    """
+    if cmap is None:
+        cmap = matplotlib.cm.get_cmap('bone')
+        
+    if color_value_map is None:
+        color_value_map = {}
+    
+    if matplotlib_ax is None:
+        fig,ax=plt.subplots(1)
+        ax.axis('equal')
+
+    geojson = \
+        get_boundaries_geojson(
+               name = name,
+               data_folder = '_data'
+               )
+    
+    # get coordinates - as multipolygon
+    for feature in geojson['features']:
+        
+        #print(feature['id'])
+        
+        if feature['geometry']['type'] == 'MultiPolygon':
+            
+            coordinates = feature['geometry']['coordinates']
+            
+        elif feature['geometry']['type'] == 'Polygon':
+            
+            coordinates = [feature['geometry']['coordinates']]
+            
+        else:
+            
+            raise Exception
+        
+        # plt coordinates
+        cd = feature['properties'].get(code_name,None)
+        
+        for polygon in coordinates:
+            
+            for coordinates_list in polygon:
+                
+                x,y=list(zip(*coordinates_list))
+                
+                color_value = color_value_map.get(cd,None)
+                if color_value is None:
+                    color = 'white'
+                else:
+                    color = cmap(color)
+                
+                pos = ax.fill(
+                    x, 
+                    y,
+                    color = color,
+                    #color=cmap(random.uniform(0.3,1.0)),
+                    edgecolor='black',
+                    linewidth=0.2
+                    )
+            
+            
+        
+        #break
 
 
 
