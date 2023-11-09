@@ -124,6 +124,25 @@ class TestDataFolder(unittest.TestCase):
             verbose=True
             )
         
+        
+        
+class TestBoundariesData(unittest.TestCase):
+    ""
+    
+    def test_get_available_boundaries_names(self):
+        ""
+        result = \
+            ogp_functions.get_available_boundaries_names(
+                )
+        print(result)
+
+
+    def test_download_boundaries_data(self):
+        ""
+        result = \
+            ogp_functions.download_boundaries_data(
+                )
+        print(result)
 
 
 class TestCodeHistoryDatabaseFunctions(unittest.TestCase):

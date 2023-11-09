@@ -27,6 +27,9 @@ urllib.request.urlcleanup()
 metadata_document_location = r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_tables-metadata.json'
 metadata_filename = 'ogp_tables-metadata.json'
 
+boundaries_metadata_location = r'https://raw.githubusercontent.com/building-energy/ogp_functions/main/ogp_boundaries-metadata.json'
+boundaries_metadata_filename = 'ogp_boundaries-metadata.json'
+
 #%% data folder
 
 def get_available_csv_file_names(
@@ -143,21 +146,82 @@ def get_ogp_table_names_in_database(
 
 
     
-def get_boundaries_names(
+def get_available_boundaries_names(
         ):
     """
     """
+    request = \
+        urllib.request.urlopen(
+            boundaries_metadata_location
+            )
+    boundaries_metadata_list = json.loads(request.read().decode())
+    
+    names = [x['name'] for x in boundaries_metadata_list]
+    
+    return names
     
 
 def download_boundaries_data(
+        names = None,
+        data_folder = '_data'
         ):
     """
     """
-    
-def _get_boundaries_metadata_file(
-        boundaries_metadata_file_location
-        ):
+    # get names to download
+    if names is None:
+        names = get_available_boundaries_names()
         
+    names = csvw_functions_extra.convert_to_iterator(names)
+    
+    # download boundaries metadata from GitHub
+    fp_boundaries_metadata = \
+        os.path.join(
+            data_folder,
+            boundaries_metadata_filename
+            )
+    
+    urllib.request.urlretrieve(
+        url = boundaries_metadata_location, 
+        filename = fp_boundaries_metadata
+        )
+    
+    # get boundaries_metadata_list
+    with open(fp_boundaries_metadata) as f:
+        boundaries_metadata_list = json.load(f)
+    
+    # download files
+    for x in boundaries_metadata_list:
+        
+        name = x['name'] 
+        
+        if name in names:
+            
+            # geojson
+            fp_geojson = \
+                os.path.join(
+                    data_folder,
+                    f'{name}.json'
+                    )
+            
+            urllib.request.urlretrieve(
+                url = x['geojson_url'], 
+                filename = fp_geojson
+                )
+            
+            # geojson - metadata
+            fp_geojson_metadata = \
+                os.path.join(
+                    data_folder,
+                    f'{name}.json-metadata.xml'
+                    )
+            
+            urllib.request.urlretrieve(
+                url = x['metadata_url'], 
+                filename = fp_geojson_metadata
+                )
+            
+    
+    return boundaries_metadata_list
 
 
 
