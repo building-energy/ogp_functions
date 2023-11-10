@@ -543,7 +543,7 @@ def get_CHD_change_rows(
     return result
 
 
-def get_CHD_change_history(
+def get_CHD_change_history_rows(
         GEOGCD=None,  # Nine digit code for the Instance (i.e. E01000001).
         GEOGNM=None,   # Name of the Instance
         GEOGNMW=None,  # Welsh name of the Instance
@@ -570,35 +570,37 @@ def get_CHD_change_history(
     """
     """
     
-    where_clause=\
-            csvw_functions_extra.get_where_string(
-                dict(
-                    GEOGCD=GEOGCD,  # Nine digit code for the Instance (i.e. E01000001).
-                    GEOGNM=GEOGNM,   # Name of the Instance
-                    GEOGNMW=GEOGNMW,  # Welsh name of the Instance
-                    SI_ID=SI_ID,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
-                    SI_TITLE=SI_TITLE,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
-                    OPER_DATE=OPER_DATE,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
-                    TERM_DATE=TERM_DATE,  # Date when the Instance was archived (usually the day before the enforcement date of legislation which defines the new instance)
-                    PARENTCD=PARENTCD,  # Nine digit code of the parent instance in the hierarchy (if there is one).
-                    ENTITYCD=ENTITYCD,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
-                    OWNER=OWNER,  # Geography owner of the entity
-                    STATUS=STATUS,  # States whether the Instance is live or terminated
-                    AREAEHECT=AREAEHECT,  # 'Extent of the Realm' measurement, in hectares, to 2 decimal places. 'Extent of the Realm' is typically co-incident with Mean Low Water
-                    AREACHECT=AREACHECT,  # Area to Mean High Water, in hectares, to 2 decimal places. Measurements are limited to the Mean High Water mark and include all tracts of inland water
-                    AREAIHECT=AREAIHECT,  # Area of inland water, in hectares, to 2 decimal places. This is the surface area of inland water with a surface area measurement of more than 1km2
-                    AREALHECT=AREALHECT,  # Area to Mean High Water excluding area of inland water (land area), in hectares, to 2 decimal places.
-                    )
-                )
+    filter_by = \
+        dict(
+                GEOGCD=GEOGCD,  # Nine digit code for the Instance (i.e. E01000001).
+                GEOGNM=GEOGNM,   # Name of the Instance
+                GEOGNMW=GEOGNMW,  # Welsh name of the Instance
+                SI_ID=SI_ID,  # Number of legislation which defines the Instance, if applicable (i.e.  Statutory Instruments)
+                SI_TITLE=SI_TITLE,  # Name of legislation which defines the Instance, if applicable (i.e. Statutory Instruments)
+                OPER_DATE=OPER_DATE,  # Date when the Instance came into use (usually the enforcement date of legislation which defines the instance)
+                TERM_DATE=TERM_DATE,  # Date when the Instance was archived (usually the day before the enforcement date of legislation which defines the new instance)
+                PARENTCD=PARENTCD,  # Nine digit code of the parent instance in the hierarchy (if there is one).
+                ENTITYCD=ENTITYCD,  # Three digit code prefix for the Entity (i.e. E01). This field is the code allocated from the Register of Geographic Codes.
+                OWNER=OWNER,  # Geography owner of the entity
+                STATUS=STATUS,  # States whether the Instance is live or terminated
+                AREAEHECT=AREAEHECT,  # 'Extent of the Realm' measurement, in hectares, to 2 decimal places. 'Extent of the Realm' is typically co-incident with Mean Low Water
+                AREACHECT=AREACHECT,  # Area to Mean High Water, in hectares, to 2 decimal places. Measurements are limited to the Mean High Water mark and include all tracts of inland water
+                AREAIHECT=AREAIHECT,  # Area of inland water, in hectares, to 2 decimal places. This is the surface area of inland water with a surface area measurement of more than 1km2
+                AREALHECT=AREALHECT,  # Area to Mean High Water excluding area of inland water (land area), in hectares, to 2 decimal places.
+            )
+    filter_by = {k:v for k,v in filter_by.items() if not v is None}    
         
-    query=f"SELECT * FROM {table_name} {where_clause};"
-
-    result=\
-        csvw_functions_extra.run_sql(
-            sql_query=query, 
-            data_folder=data_folder, 
-            database_name=database_name,
-            verbose=verbose
+    result = \
+        csvw_functions_extra.get_rows(
+            table_name = table_name,
+            data_folder = data_folder,
+            database_name = database_name,
+            filter_by = filter_by,
+            fields = fields,
+            limit = limit,
+            pandas = pandas,
+            metadata_filename = metadata_filename,
+            verbose = verbose
             )
     
     return result

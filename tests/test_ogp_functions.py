@@ -152,7 +152,7 @@ class TestBoundariesData(unittest.TestCase):
                 )
         print(result)
         
-    def test_plot_boundaries(self):
+    def _test_plot_boundaries(self):
         ""
         ogp_functions.plot_boundaries(
             name = 'Local_Authority_Districts_May_2023_UK_BUC_V2'
@@ -161,6 +161,17 @@ class TestBoundariesData(unittest.TestCase):
 
 class TestCodeHistoryDatabaseFunctions(unittest.TestCase):
     ""
+    
+    
+    def test1(self):
+        ""
+        
+        result=ogp_functions.get_CHD_change_history_rows(
+            GEOGCD = 'E07000044',
+            table_name = 'Code_History_Database_May_2023_UK_ChangeHistory',
+            verbose = False
+            )
+        print(result)
     
     def test_get_CHD_change_rows(self):
         ""

@@ -41,6 +41,42 @@
         },
         {
             "@type": "Table",
+            "url": "https://opendata.arcgis.com/api/v3/datasets/af6a47124f424a8fb8bbf76a0af2c258_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1",
+            "https://purl.org/berg/csvw_functions_extra/vocab/csv_download_url": "https://opendata.arcgis.com/api/v3/datasets/af6a47124f424a8fb8bbf76a0af2c258_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1", 
+            "https://purl.org/berg/csvw_functions_extra/vocab/csv_file_name": "Local_Authority_District_to_Region_December_2020.csv",
+            "https://purl.org/berg/csvw_functions_extra/vocab/sql_table_name": "Local_Authority_District_to_Region_December_2020",
+            "https://purl.org/berg/csvw_functions_extra/vocab/metadata_download_url": "https://www.arcgis.com/sharing/rest/content/items/af6a47124f424a8fb8bbf76a0af2c258/info/metadata/metadata.xml", 
+            "https://purl.org/berg/csvw_functions_extra/vocab/metadata_file_suffix": "metadata.xml", 
+            "tableSchema": {
+                "primaryKey": ["FID"],
+                "columns": [
+                    {
+                        "name": "FID",
+                        "datatype": "integer"
+                    },
+                    {
+                        "name": "LAD20CD",
+                        "datatype": "string",
+                        "https://purl.org/berg/csvw_functions_extra/vocab/sqlsetindex": true
+                    },
+                    {
+                        "name": "LAD20NM",
+                        "datatype": "string"
+                    },
+                    {
+                        "name": "RGN20CD",
+                        "datatype": "string",
+                        "https://purl.org/berg/csvw_functions_extra/vocab/sqlsetindex": true
+                    },
+                    {
+                        "name": "RGN20NM",
+                        "datatype": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "@type": "Table",
             "url": "https://opendata.arcgis.com/api/v3/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1",
             "https://purl.org/berg/csvw_functions_extra/vocab/csv_download_url": "https://opendata.arcgis.com/api/v3/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0/downloads/data?format=csv&spatialRefId=4326&where=1%3D1", 
             "https://purl.org/berg/csvw_functions_extra/vocab/csv_file_name": "OA_to_LSOA_to_MSOA_to_LAD_December_2021_v3.csv",
